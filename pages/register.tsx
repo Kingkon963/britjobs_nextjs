@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { MdHome } from "react-icons/md";
 
-const Register: React.FC = ({ children }) => {
+const Register: React.FC = () => {
   return (
     <div className="flex justify-center items-center h-screen">
       <Head>
@@ -19,12 +19,17 @@ const Register: React.FC = ({ children }) => {
         </Link>
       </div>
 
-      <div className="p-10 card bg-base-200 w-3/12">
+      <div className="p-10 card bg-base-200 lg:w-3/12">
         <div className="form-control">
+          <label className="label">
+            <span className="label-text">Username</span>
+          </label>
+          <input type="text" placeholder="username" className="input" />
+
           <label className="label">
             <span className="label-text">Email</span>
           </label>
-          <input type="email" placeholder="username/email" className="input" />
+          <input type="email" placeholder="email" className="input" />
 
           <label className="label">
             <span className="label-text">Password</span>

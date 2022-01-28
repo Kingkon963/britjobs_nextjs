@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { MdHome } from "react-icons/md";
 
-const Login: React.FC = ({ children }) => {
+const Login: React.FC = () => {
   return (
     <div className="flex justify-center items-center h-screen">
       <Head>
