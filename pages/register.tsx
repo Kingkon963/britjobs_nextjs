@@ -92,15 +92,20 @@ const Register: React.FC = () => {
     errorPolicy: "all",
   });
 
+  const isValidData = (): boolean => {
+    if (state.username.length === 0) return false;
+    if (state.email.length === 0) return false;
+    if (state.password.length === 0) return false;
+    if (state.password !== state.confirmPass) return false;
+
+    return true;
+  };
+
   const register = () => {
     dispatch({ type: ACTIONS.RESET_ERROR });
-    // check password
-    if (state.password !== state.confirmPass) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: "Password doesn't match" });
-      return;
-    }
+
     console.log(state);
-    if (state.error === undefined) {
+    if (isValidData()) {
       runRegister({
         variables: { username: state.username, email: state.email, password: state.password },
       });
@@ -110,7 +115,6 @@ const Register: React.FC = () => {
   React.useEffect(() => {
     if (data) {
       dispatch({ type: ACTIONS.RESET });
-      console.log(data);
     }
   }, [data]);
 
@@ -175,7 +179,11 @@ const Register: React.FC = () => {
             onChange={(e) => dispatch({ type: ACTIONS.SET_CONF_PASSWORD, payload: e.target.value })}
           />
 
-          <button className="btn btn-primary mt-5" onClick={register} disabled={loading}>
+          <button
+            className={`btn btn-primary mt-5 ${loading ? "loading" : ""}`}
+            onClick={() => register()}
+            disabled={loading}
+          >
             Register
           </button>
           <label className="label">
