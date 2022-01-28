@@ -7,7 +7,7 @@ const Layout: React.FC = ({ children }) => {
 
   return (
     <div className="rounded-none shadow bg-base-200 drawer drawer-mobile h-screen">
-      <input id="appDrawer" type="checkbox" className="drawer-toggle" checked={open} />
+      <input id="appDrawer" type="checkbox" className="drawer-toggle" checked={open} readOnly />
       <div className="flex flex-col items-center justify-start drawer-content">
         <label
           htmlFor="appDrawer"

@@ -20,6 +20,6 @@
       "@graphQL/*": ["graphql/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "graphql.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

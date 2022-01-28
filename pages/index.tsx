@@ -1,8 +1,27 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useQuery } from "@apollo/client";
 import Layout from "@components/Layout";
+import getUsernames from "@graphQL/queries/getUsernames.gql";
+import { UsersPermissionsUserEntityResponseCollection } from "@graphQL/graphql-operations";
+import { useEffect, useState } from "react";
+
+interface Users {
+  usersPermissionsUsers: UsersPermissionsUserEntityResponseCollection;
+}
 
 const Home: NextPage = () => {
+  const { data, loading } = useQuery<Users>(getUsernames);
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    console.log(data);
+    if (data && data.usersPermissionsUsers && data.usersPermissionsUsers.data[0].attributes) {
+      console.log(data?.usersPermissionsUsers.data[0].attributes?.username);
+      setUsername(data?.usersPermissionsUsers.data[0].attributes?.username);
+    }
+  }, [data, loading]);
+
   return (
     <div>
       <Head>
@@ -13,7 +32,7 @@ const Home: NextPage = () => {
       <Layout>
         <div className="py-10">
           <div className="flex flex-col justify-center items-start">
-            <h1 className="text-6xl">Welcome, _ !</h1>
+            {!loading && <h1 className="text-6xl">Welcome, {username}!</h1>}
           </div>
         </div>
       </Layout>
