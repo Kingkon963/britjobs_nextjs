@@ -1,15 +1,17 @@
 import * as React from "react";
-import { useReducer } from "react";
+import { useReducer, useContext } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { MdHome, MdError } from "react-icons/md";
 import {
+  RegisterMutation,
   UsersPermissionsLoginPayload,
   UsersPermissionsRegisterInput,
 } from "@graphQL/graphql-operations";
 import REGISTER from "@graphQL/mutations/register.gql";
 import { useMutation } from "@apollo/client";
 import keyGen from "@utils/genKey";
+import { AuthContext, AUTH_ACTIONS } from "src/contexts/AuthContext";
 
 enum ACTIONS {
   SET_USERNAME,
@@ -24,10 +26,6 @@ enum ACTIONS {
 interface ActionType {
   type: ACTIONS;
   payload?: string;
-}
-
-interface RegisterResponse {
-  register: UsersPermissionsLoginPayload;
 }
 
 interface RegisterInput extends UsersPermissionsRegisterInput {
@@ -88,9 +86,10 @@ const reducer = (state: RegisterInput, action: ActionType): RegisterInput => {
 
 const Register: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initState);
-  const [runRegister, { loading, data, error }] = useMutation<RegisterResponse>(REGISTER, {
+  const [runRegister, { loading, data, error }] = useMutation<RegisterMutation>(REGISTER, {
     errorPolicy: "all",
   });
+  const { state: authState, dispatch: authDispatch } = useContext(AuthContext);
 
   const isValidData = (): boolean => {
     if (state.username.length === 0) return false;
@@ -115,8 +114,11 @@ const Register: React.FC = () => {
   React.useEffect(() => {
     if (data) {
       dispatch({ type: ACTIONS.RESET });
+      if (authDispatch) {
+        authDispatch({ type: AUTH_ACTIONS.LOGIN, payload: data });
+      }
     }
-  }, [data]);
+  }, [authDispatch, data]);
 
   return (
     <div className="flex justify-center items-center h-screen">

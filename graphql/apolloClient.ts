@@ -1,13 +1,15 @@
 import { ApolloClient, HttpLink, InMemoryCache, from } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
-import { getCookie } from "cookies-next";
+import { Cookies } from "react-cookie";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:1337/graphql";
+
+const cookies = new Cookies();
 
 const httpLink = new HttpLink({
   uri: BACKEND_URL,
   headers: {
-    Authorization: `Bearer ${process.browser ? getCookie("jwt") || "" : ""}`,
+    Authorization: `Bearer ${process.browser ? cookies.get("jwt") || "" : ""}`,
   },
 });
 

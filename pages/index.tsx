@@ -1,26 +1,21 @@
+import { useEffect, useState, useContext } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useQuery } from "@apollo/client";
 import Layout from "@components/Layout";
-import getUsernames from "@graphQL/queries/getUsernames.gql";
-import { UsersPermissionsUserEntityResponseCollection } from "@graphQL/graphql-operations";
-import { useEffect, useState } from "react";
-
-interface Users {
-  usersPermissionsUsers: UsersPermissionsUserEntityResponseCollection;
-}
+import { AuthContext } from "src/contexts/AuthContext";
 
 const Home: NextPage = () => {
-  const { data, loading } = useQuery<Users>(getUsernames);
   const [username, setUsername] = useState("");
+  const { state: authState } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log(data);
-    if (data && data.usersPermissionsUsers && data.usersPermissionsUsers.data[0].attributes) {
-      console.log(data?.usersPermissionsUsers.data[0].attributes?.username);
-      setUsername(data?.usersPermissionsUsers.data[0].attributes?.username);
+    if (authState) {
+      if (authState.isLogedin) {
+        const name = authState.userInfo?.username;
+        if (name) setUsername(name);
+      }
     }
-  }, [data, loading]);
+  }, [authState]);
 
   return (
     <div>
@@ -32,7 +27,7 @@ const Home: NextPage = () => {
       <Layout>
         <div className="py-10">
           <div className="flex flex-col justify-center items-start">
-            {!loading && <h1 className="text-6xl">Welcome, {username}!</h1>}
+            {username.length > 0 && <h1 className="text-6xl">Welcome, {username}!</h1>}
           </div>
         </div>
       </Layout>
