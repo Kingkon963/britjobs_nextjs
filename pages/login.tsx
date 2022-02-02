@@ -1,9 +1,113 @@
 import * as React from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { MdHome } from "react-icons/md";
+import { MdHome, MdError } from "react-icons/md";
+import LOGIN from "@graphQL/mutations/login.gql";
+import { useMutation } from "@apollo/client";
+import { LoginMutation } from "@graphQL/graphql-operations";
+import keyGen from "@utils/genKey";
+import { AuthContext, AUTH_ACTIONS } from "src/contexts/AuthContext";
+
+enum ACTIONS {
+  SET_IDENTIFIER,
+  SET_PASSWORD,
+  SET_ERROR,
+  RESET_ERROR,
+}
+
+interface LoginInterface {
+  identifier: string;
+  password: string;
+  error?: string;
+}
+interface ActionType {
+  type: ACTIONS;
+  payload?: string;
+}
+
+const initState: LoginInterface = {
+  identifier: "",
+  password: "",
+  error: undefined,
+};
+
+const reducer = (prevState: LoginInterface, action: ActionType): LoginInterface => {
+  switch (action.type) {
+    case ACTIONS.SET_IDENTIFIER:
+      if (action.payload !== undefined) return { ...prevState, identifier: action.payload };
+      return prevState;
+
+    case ACTIONS.SET_PASSWORD:
+      if (action.payload !== undefined) return { ...prevState, password: action.payload };
+      return prevState;
+
+    case ACTIONS.SET_ERROR:
+      if (action.payload !== undefined) return { ...prevState, error: action.payload };
+      return prevState;
+    case ACTIONS.RESET_ERROR:
+      return { ...prevState, error: undefined };
+    default:
+      throw new Error("No reducer found for this action: " + ACTIONS[action.type]);
+  }
+};
+
+const validateEmail = (email: String) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
 
 const Login: React.FC = () => {
+  const [state, dispatch] = React.useReducer(reducer, initState);
+  const [runLogin, { loading, data, error }] = useMutation<LoginMutation>(LOGIN, {
+    errorPolicy: "all",
+  });
+  const { dispatch: AuthDispatch } = React.useContext(AuthContext);
+
+  const isValidData = (): boolean => {
+    if (state.identifier.length === 0) {
+      dispatch({ type: ACTIONS.SET_ERROR, payload: "Please provide an Email" });
+      return false;
+    }
+    if (state.password.length === 0) {
+      dispatch({ type: ACTIONS.SET_ERROR, payload: "Please provide a password" });
+      return false;
+    }
+    if (validateEmail(state.identifier) === null) {
+      dispatch({ type: ACTIONS.SET_ERROR, payload: "Please provide a valid Email" });
+      return false;
+    }
+
+    return true;
+  };
+
+  const login = () => {
+    dispatch({ type: ACTIONS.RESET_ERROR });
+    if (isValidData()) {
+      runLogin({
+        variables: {
+          identifier: state.identifier,
+          password: state.password,
+        },
+      });
+    }
+  };
+
+  React.useEffect(() => {
+    console.log(error?.graphQLErrors);
+    if (error?.message) {
+      dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
+    }
+  }, [error]);
+
+  React.useEffect(() => {
+    if (data && AuthDispatch) {
+      AuthDispatch({ type: AUTH_ACTIONS.LOGIN, payload: data });
+    }
+  }, [data, AuthDispatch]);
+
   return (
     <div className="flex justify-center items-center h-screen">
       <Head>
@@ -24,23 +128,47 @@ const Login: React.FC = () => {
           <label className="label">
             <span className="label-text">Email</span>
           </label>
-          <input type="email" placeholder="username/email" className="input" />
+          <input
+            type="email"
+            placeholder="username/email"
+            className="input"
+            value={state.identifier}
+            onChange={(e) => dispatch({ type: ACTIONS.SET_IDENTIFIER, payload: e.target.value })}
+          />
 
           <label className="label">
             <span className="label-text">Password</span>
           </label>
-          <input type="text" placeholder="Enter your password" className="input" />
+          <input
+            type="password"
+            placeholder="Enter your password"
+            className="input"
+            value={state.password}
+            onChange={(e) => dispatch({ type: ACTIONS.SET_PASSWORD, payload: e.target.value })}
+          />
           <label className="label">
             <a href="" className="label-text-alt text-error">
               Forgot password?
             </a>
           </label>
-          <button className="btn btn-primary mt-5">Login</button>
+          <button className="btn btn-primary mt-5" onClick={() => login()} disabled={loading}>
+            Login
+          </button>
           <label className="label">
             <span className="label-text-alt text-info cursor-pointer">
               <Link href="/register">Register</Link>
             </span>
           </label>
+        </div>
+        <div className="flex flex-col mt-2 gap-2">
+          {
+            <div className={`alert alert-error ${state.error !== undefined ? "" : "invisible"}`}>
+              <div className="flex-1 items-center gap-2">
+                <MdError className="text-lg" />
+                <label>{state.error}</label>
+              </div>
+            </div>
+          }
         </div>
       </div>
     </div>

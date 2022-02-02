@@ -13,7 +13,7 @@ const Home: NextPage = () => {
       if (authState.isLogedin) {
         const name = authState.userInfo?.username;
         if (name) setUsername(name);
-      }
+      } else setUsername("");
     }
   }, [authState]);
 

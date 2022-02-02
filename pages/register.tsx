@@ -92,10 +92,22 @@ const Register: React.FC = () => {
   const { state: authState, dispatch: authDispatch } = useContext(AuthContext);
 
   const isValidData = (): boolean => {
-    if (state.username.length === 0) return false;
-    if (state.email.length === 0) return false;
-    if (state.password.length === 0) return false;
-    if (state.password !== state.confirmPass) return false;
+    if (state.username.length === 0) {
+      dispatch({ type: ACTIONS.SET_ERROR, payload: "Please provide a username" });
+      return false;
+    }
+    if (state.email.length === 0) {
+      dispatch({ type: ACTIONS.SET_ERROR, payload: "Please provide an email" });
+      return false;
+    }
+    if (state.password.length === 0) {
+      dispatch({ type: ACTIONS.SET_ERROR, payload: "Please provide a password" });
+      return false;
+    }
+    if (state.password !== state.confirmPass) {
+      dispatch({ type: ACTIONS.SET_ERROR, payload: "Password doesn't match" });
+      return false;
+    }
 
     return true;
   };
@@ -115,7 +127,7 @@ const Register: React.FC = () => {
     if (data) {
       dispatch({ type: ACTIONS.RESET });
       if (authDispatch) {
-        authDispatch({ type: AUTH_ACTIONS.LOGIN, payload: data });
+        authDispatch({ type: AUTH_ACTIONS.REGISTER, payload: data });
       }
     }
   }, [authDispatch, data]);
