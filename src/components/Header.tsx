@@ -9,7 +9,7 @@ const defaultProfilePic = (
     viewBox="0 0 48.75 48.75"
     height="48.75"
     version="1.0"
-    className="w-full h-full"
+    className="h-full w-full"
   >
     <defs>
       <clipPath id="a">
@@ -32,17 +32,17 @@ const Header: React.FC = () => {
   };
 
   return (
-    <div className="flex py-3 items-center border-b border-base-100">
+    <div className="border-base-100 flex items-center border-b py-3">
       <div>
         <h1 className="text-4xl tracking-wider">Britjobs</h1>
       </div>
-      <div className="flex gap-2 ml-auto">
+      <div className="ml-auto flex gap-2">
         {!AuthState.isLogedin && (
           <>
-            <Link href="auth/login" passHref>
+            <Link href="/auth/login" passHref>
               <button className="btn btn-primary">Login</button>
             </Link>
-            <Link href="auth/register" passHref>
+            <Link href="/auth/register" passHref>
               <button className="btn">Register</button>
             </Link>
           </>
@@ -50,18 +50,15 @@ const Header: React.FC = () => {
         {AuthState.isLogedin && (
           <>
             <div className="dropdown dropdown-end">
-              <button tabIndex={0} className="btn btn-circle p-0 bg-base-100">
+              <button tabIndex={0} className="btn btn-circle bg-base-100 p-0">
                 {defaultProfilePic}
               </button>
               <ul
                 tabIndex={0}
-                className="p-2 shadow menu dropdown-content bg-base-300 rounded-box w-52"
+                className="menu dropdown-content bg-base-300 rounded-box w-52 p-2 shadow"
               >
                 <li>
-                  <a>Item 1</a>
-                </li>
-                <li>
-                  <a>Item 2</a>
+                  <Link href="/profile">Profile</Link>
                 </li>
                 <li>
                   <a onClick={() => handleLogout()}>Logout</a>

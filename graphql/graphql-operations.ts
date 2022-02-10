@@ -11,6 +11,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  Date: any;
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: any;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
@@ -40,6 +42,140 @@ export type BooleanFilterInput = {
   null?: InputMaybe<Scalars['Boolean']>;
   or?: InputMaybe<Array<InputMaybe<Scalars['Boolean']>>>;
   startsWith?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type ComponentContactDetailAddress = {
+  __typename?: 'ComponentContactDetailAddress';
+  addressLine?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  phone?: Maybe<Scalars['Int']>;
+  postcode?: Maybe<Scalars['String']>;
+};
+
+export type ComponentContactDetailAddressInput = {
+  addressLine?: InputMaybe<Scalars['String']>;
+  city?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  phone?: InputMaybe<Scalars['Int']>;
+  postcode?: InputMaybe<Scalars['String']>;
+};
+
+export type ComponentContactDetailWorkHistory = {
+  __typename?: 'ComponentContactDetailWorkHistory';
+  address?: Maybe<Scalars['String']>;
+  companyName?: Maybe<Scalars['String']>;
+  from?: Maybe<Scalars['Date']>;
+  id: Scalars['ID'];
+  jobTitle?: Maybe<Scalars['String']>;
+  to?: Maybe<Scalars['Date']>;
+};
+
+export type ComponentContactDetailWorkHistoryFiltersInput = {
+  address?: InputMaybe<StringFilterInput>;
+  and?: InputMaybe<Array<InputMaybe<ComponentContactDetailWorkHistoryFiltersInput>>>;
+  companyName?: InputMaybe<StringFilterInput>;
+  from?: InputMaybe<DateFilterInput>;
+  jobTitle?: InputMaybe<StringFilterInput>;
+  not?: InputMaybe<ComponentContactDetailWorkHistoryFiltersInput>;
+  or?: InputMaybe<Array<InputMaybe<ComponentContactDetailWorkHistoryFiltersInput>>>;
+  to?: InputMaybe<DateFilterInput>;
+};
+
+export type ComponentContactDetailWorkHistoryInput = {
+  address?: InputMaybe<Scalars['String']>;
+  companyName?: InputMaybe<Scalars['String']>;
+  from?: InputMaybe<Scalars['Date']>;
+  id?: InputMaybe<Scalars['ID']>;
+  jobTitle?: InputMaybe<Scalars['String']>;
+  to?: InputMaybe<Scalars['Date']>;
+};
+
+export type ContactDetail = {
+  __typename?: 'ContactDetail';
+  aboutMe?: Maybe<Scalars['String']>;
+  address?: Maybe<ComponentContactDetailAddress>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  dateOfBirth?: Maybe<Scalars['Date']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  publishedAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  user?: Maybe<UsersPermissionsUserEntityResponse>;
+  workHistory?: Maybe<Array<Maybe<ComponentContactDetailWorkHistory>>>;
+};
+
+
+export type ContactDetailWorkHistoryArgs = {
+  filters?: InputMaybe<ComponentContactDetailWorkHistoryFiltersInput>;
+  pagination?: InputMaybe<PaginationArg>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+export type ContactDetailEntity = {
+  __typename?: 'ContactDetailEntity';
+  attributes?: Maybe<ContactDetail>;
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type ContactDetailEntityResponse = {
+  __typename?: 'ContactDetailEntityResponse';
+  data?: Maybe<ContactDetailEntity>;
+};
+
+export type ContactDetailEntityResponseCollection = {
+  __typename?: 'ContactDetailEntityResponseCollection';
+  data: Array<ContactDetailEntity>;
+  meta: ResponseCollectionMeta;
+};
+
+export type ContactDetailFiltersInput = {
+  aboutMe?: InputMaybe<StringFilterInput>;
+  and?: InputMaybe<Array<InputMaybe<ContactDetailFiltersInput>>>;
+  createdAt?: InputMaybe<DateTimeFilterInput>;
+  dateOfBirth?: InputMaybe<DateFilterInput>;
+  firstName?: InputMaybe<StringFilterInput>;
+  id?: InputMaybe<IdFilterInput>;
+  lastName?: InputMaybe<StringFilterInput>;
+  not?: InputMaybe<ContactDetailFiltersInput>;
+  or?: InputMaybe<Array<InputMaybe<ContactDetailFiltersInput>>>;
+  publishedAt?: InputMaybe<DateTimeFilterInput>;
+  updatedAt?: InputMaybe<DateTimeFilterInput>;
+  user?: InputMaybe<UsersPermissionsUserFiltersInput>;
+};
+
+export type ContactDetailInput = {
+  aboutMe?: InputMaybe<Scalars['String']>;
+  address?: InputMaybe<ComponentContactDetailAddressInput>;
+  dateOfBirth?: InputMaybe<Scalars['Date']>;
+  firstName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  publishedAt?: InputMaybe<Scalars['DateTime']>;
+  user?: InputMaybe<Scalars['ID']>;
+  workHistory?: InputMaybe<Array<InputMaybe<ComponentContactDetailWorkHistoryInput>>>;
+};
+
+export type DateFilterInput = {
+  and?: InputMaybe<Array<InputMaybe<Scalars['Date']>>>;
+  between?: InputMaybe<Array<InputMaybe<Scalars['Date']>>>;
+  contains?: InputMaybe<Scalars['Date']>;
+  containsi?: InputMaybe<Scalars['Date']>;
+  endsWith?: InputMaybe<Scalars['Date']>;
+  eq?: InputMaybe<Scalars['Date']>;
+  gt?: InputMaybe<Scalars['Date']>;
+  gte?: InputMaybe<Scalars['Date']>;
+  in?: InputMaybe<Array<InputMaybe<Scalars['Date']>>>;
+  lt?: InputMaybe<Scalars['Date']>;
+  lte?: InputMaybe<Scalars['Date']>;
+  ne?: InputMaybe<Scalars['Date']>;
+  not?: InputMaybe<DateFilterInput>;
+  notContains?: InputMaybe<Scalars['Date']>;
+  notContainsi?: InputMaybe<Scalars['Date']>;
+  notIn?: InputMaybe<Array<InputMaybe<Scalars['Date']>>>;
+  notNull?: InputMaybe<Scalars['Boolean']>;
+  null?: InputMaybe<Scalars['Boolean']>;
+  or?: InputMaybe<Array<InputMaybe<Scalars['Date']>>>;
+  startsWith?: InputMaybe<Scalars['Date']>;
 };
 
 export type DateTimeFilterInput = {
@@ -94,7 +230,7 @@ export type FloatFilterInput = {
   startsWith?: InputMaybe<Scalars['Float']>;
 };
 
-export type GenericMorph = I18NLocale | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser;
+export type GenericMorph = ComponentContactDetailAddress | ComponentContactDetailWorkHistory | ContactDetail | I18NLocale | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser;
 
 export type I18NLocale = {
   __typename?: 'I18NLocale';
@@ -203,11 +339,13 @@ export type JsonFilterInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createContactDetail?: Maybe<ContactDetailEntityResponse>;
   createUploadFile?: Maybe<UploadFileEntityResponse>;
   /** Create a new role */
   createUsersPermissionsRole?: Maybe<UsersPermissionsCreateRolePayload>;
   /** Create a new user */
   createUsersPermissionsUser: UsersPermissionsUserEntityResponse;
+  deleteContactDetail?: Maybe<ContactDetailEntityResponse>;
   deleteUploadFile?: Maybe<UploadFileEntityResponse>;
   /** Delete an existing role */
   deleteUsersPermissionsRole?: Maybe<UsersPermissionsDeleteRolePayload>;
@@ -224,6 +362,7 @@ export type Mutation = {
   removeFile?: Maybe<UploadFileEntityResponse>;
   /** Reset user password. Confirm with a code (resetToken from forgotPassword) */
   resetPassword?: Maybe<UsersPermissionsLoginPayload>;
+  updateContactDetail?: Maybe<ContactDetailEntityResponse>;
   updateFileInfo: UploadFileEntityResponse;
   updateUploadFile?: Maybe<UploadFileEntityResponse>;
   /** Update an existing role */
@@ -231,6 +370,11 @@ export type Mutation = {
   /** Update an existing user */
   updateUsersPermissionsUser: UsersPermissionsUserEntityResponse;
   upload: UploadFileEntityResponse;
+};
+
+
+export type MutationCreateContactDetailArgs = {
+  data: ContactDetailInput;
 };
 
 
@@ -246,6 +390,11 @@ export type MutationCreateUsersPermissionsRoleArgs = {
 
 export type MutationCreateUsersPermissionsUserArgs = {
   data: UsersPermissionsUserInput;
+};
+
+
+export type MutationDeleteContactDetailArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -304,6 +453,12 @@ export type MutationResetPasswordArgs = {
 };
 
 
+export type MutationUpdateContactDetailArgs = {
+  data: ContactDetailInput;
+  id: Scalars['ID'];
+};
+
+
 export type MutationUpdateFileInfoArgs = {
   id: Scalars['ID'];
   info?: InputMaybe<FileInfoInput>;
@@ -351,8 +506,15 @@ export type PaginationArg = {
   start?: InputMaybe<Scalars['Int']>;
 };
 
+export enum PublicationState {
+  Live = 'LIVE',
+  Preview = 'PREVIEW'
+}
+
 export type Query = {
   __typename?: 'Query';
+  contactDetail?: Maybe<ContactDetailEntityResponse>;
+  contactDetails?: Maybe<ContactDetailEntityResponseCollection>;
   i18NLocale?: Maybe<I18NLocaleEntityResponse>;
   i18NLocales?: Maybe<I18NLocaleEntityResponseCollection>;
   me?: Maybe<UsersPermissionsMe>;
@@ -362,6 +524,19 @@ export type Query = {
   usersPermissionsRoles?: Maybe<UsersPermissionsRoleEntityResponseCollection>;
   usersPermissionsUser?: Maybe<UsersPermissionsUserEntityResponse>;
   usersPermissionsUsers?: Maybe<UsersPermissionsUserEntityResponseCollection>;
+};
+
+
+export type QueryContactDetailArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type QueryContactDetailsArgs = {
+  filters?: InputMaybe<ContactDetailFiltersInput>;
+  pagination?: InputMaybe<PaginationArg>;
+  publicationState?: InputMaybe<PublicationState>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 
@@ -672,9 +847,9 @@ export type UsersPermissionsUser = {
   __typename?: 'UsersPermissionsUser';
   blocked?: Maybe<Scalars['Boolean']>;
   confirmed?: Maybe<Scalars['Boolean']>;
+  contact_detail?: Maybe<ContactDetailEntityResponse>;
   createdAt?: Maybe<Scalars['DateTime']>;
   email: Scalars['String'];
-  hasInfo?: Maybe<Scalars['Boolean']>;
   provider?: Maybe<Scalars['String']>;
   role?: Maybe<UsersPermissionsRoleEntityResponse>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -703,9 +878,9 @@ export type UsersPermissionsUserFiltersInput = {
   blocked?: InputMaybe<BooleanFilterInput>;
   confirmationToken?: InputMaybe<StringFilterInput>;
   confirmed?: InputMaybe<BooleanFilterInput>;
+  contact_detail?: InputMaybe<ContactDetailFiltersInput>;
   createdAt?: InputMaybe<DateTimeFilterInput>;
   email?: InputMaybe<StringFilterInput>;
-  hasInfo?: InputMaybe<BooleanFilterInput>;
   id?: InputMaybe<IdFilterInput>;
   not?: InputMaybe<UsersPermissionsUserFiltersInput>;
   or?: InputMaybe<Array<InputMaybe<UsersPermissionsUserFiltersInput>>>;
@@ -721,8 +896,8 @@ export type UsersPermissionsUserInput = {
   blocked?: InputMaybe<Scalars['Boolean']>;
   confirmationToken?: InputMaybe<Scalars['String']>;
   confirmed?: InputMaybe<Scalars['Boolean']>;
+  contact_detail?: InputMaybe<Scalars['ID']>;
   email?: InputMaybe<Scalars['String']>;
-  hasInfo?: InputMaybe<Scalars['Boolean']>;
   password?: InputMaybe<Scalars['String']>;
   provider?: InputMaybe<Scalars['String']>;
   resetPasswordToken?: InputMaybe<Scalars['String']>;
@@ -752,6 +927,13 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UsersPermissionsLoginPayload', jwt?: string | null | undefined, user: { __typename?: 'UsersPermissionsMe', id: string, username: string, email?: string | null | undefined, confirmed?: boolean | null | undefined, blocked?: boolean | null | undefined } } };
 
+export type GetContactDetailsQueryVariables = Exact<{
+  userID: Scalars['ID'];
+}>;
+
+
+export type GetContactDetailsQuery = { __typename?: 'Query', contactDetails?: { __typename?: 'ContactDetailEntityResponseCollection', data: Array<{ __typename?: 'ContactDetailEntity', id?: string | null | undefined, attributes?: { __typename?: 'ContactDetail', firstName?: string | null | undefined, lastName?: string | null | undefined, aboutMe?: string | null | undefined, address?: { __typename?: 'ComponentContactDetailAddress', postcode?: string | null | undefined } | null | undefined } | null | undefined }> } | null | undefined };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -760,4 +942,5 @@ export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'UsersPermissi
 
 export const LoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LOGIN"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"identifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"identifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"identifier"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jwt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"confirmed"}},{"kind":"Field","name":{"kind":"Name","value":"blocked"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
 export const RegisterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"REGISTER"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"username"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"username"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jwt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"confirmed"}},{"kind":"Field","name":{"kind":"Name","value":"blocked"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterMutation, RegisterMutationVariables>;
+export const GetContactDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetContactDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userID"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contactDetails"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filters"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userID"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attributes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"aboutMe"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postcode"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetContactDetailsQuery, GetContactDetailsQueryVariables>;
 export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"confirmed"}},{"kind":"Field","name":{"kind":"Name","value":"blocked"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
