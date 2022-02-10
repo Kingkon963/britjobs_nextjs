@@ -7,6 +7,7 @@ import { useMutation } from "@apollo/client";
 import { LoginMutation } from "@graphQL/graphql-operations";
 import keyGen from "@utils/genKey";
 import { AuthContext, AUTH_ACTIONS } from "src/contexts/AuthContext";
+import { useRouter } from "next/router";
 
 enum ACTIONS {
   SET_IDENTIFIER,
@@ -65,6 +66,7 @@ const Login: React.FC = () => {
     errorPolicy: "all",
   });
   const { dispatch: AuthDispatch } = React.useContext(AuthContext);
+  const router = useRouter();
 
   const isValidData = (): boolean => {
     if (state.identifier.length === 0) {
@@ -105,8 +107,9 @@ const Login: React.FC = () => {
   React.useEffect(() => {
     if (data && AuthDispatch) {
       AuthDispatch({ type: AUTH_ACTIONS.LOGIN, payload: data });
+      router.push("/");
     }
-  }, [data, AuthDispatch]);
+  }, [data, AuthDispatch, router]);
 
   return (
     <div className="flex justify-center items-center h-screen">

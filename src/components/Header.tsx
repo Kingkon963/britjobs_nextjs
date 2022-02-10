@@ -39,10 +39,10 @@ const Header: React.FC = () => {
       <div className="flex gap-2 ml-auto">
         {!AuthState.isLogedin && (
           <>
-            <Link href="/login" passHref>
+            <Link href="auth/login" passHref>
               <button className="btn btn-primary">Login</button>
             </Link>
-            <Link href="/register" passHref>
+            <Link href="auth/register" passHref>
               <button className="btn">Register</button>
             </Link>
           </>

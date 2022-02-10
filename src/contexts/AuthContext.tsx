@@ -55,7 +55,7 @@ const cookies = new Cookies();
 const setJWT = (token: string): void => {
   cookies.set("jwt", token, {
     path: "/",
-    maxAge: 3600 * 24 * 30,
+    maxAge: 3600 * 24 * 30, // 1 month
     sameSite: true,
     //httpOnly: true,
     //secure: true,

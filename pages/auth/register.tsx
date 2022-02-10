@@ -12,6 +12,7 @@ import REGISTER from "@graphQL/mutations/register.gql";
 import { useMutation } from "@apollo/client";
 import keyGen from "@utils/genKey";
 import { AuthContext, AUTH_ACTIONS } from "src/contexts/AuthContext";
+import { useRouter } from "next/router";
 
 enum ACTIONS {
   SET_USERNAME,
@@ -90,6 +91,7 @@ const Register: React.FC = () => {
     errorPolicy: "all",
   });
   const { state: authState, dispatch: authDispatch } = useContext(AuthContext);
+  const router = useRouter();
 
   const isValidData = (): boolean => {
     if (state.username.length === 0) {
@@ -128,9 +130,10 @@ const Register: React.FC = () => {
       dispatch({ type: ACTIONS.RESET });
       if (authDispatch) {
         authDispatch({ type: AUTH_ACTIONS.REGISTER, payload: data });
+        router.push("/");
       }
     }
-  }, [authDispatch, data]);
+  }, [authDispatch, data, router]);
 
   return (
     <div className="flex justify-center items-center h-screen">
