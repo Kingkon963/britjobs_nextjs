@@ -24,6 +24,7 @@ const Dashboard: NextPage = () => {
   }, [authState, runGetContactDetails]);
 
   useEffect(() => {
+    console.log(data);
     if (data?.contactDetails?.data && data?.contactDetails?.data.length > 0) {
       setProfileIsIncomplete(false);
     } else {
@@ -41,11 +42,11 @@ const Dashboard: NextPage = () => {
       <>
         {profileIsIncomplete && (
           <div
-            className="bg-info text-base-200 sticky top-0 z-50 flex items-center 
-        justify-center gap-5 py-2 font-bold tracking-wider"
+            className="sticky top-0 z-50 flex items-center justify-center gap-5 
+        bg-info py-2 font-bold tracking-wider text-base-200"
           >
             <span>Your profile is incomplete!</span>
-            <button className="btn btn-sm btn-primary">Complete Profile</button>
+            <button className="btn btn-primary btn-sm">Complete Profile</button>
           </div>
         )}
         <Layout>

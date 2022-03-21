@@ -6,12 +6,12 @@ const Layout: React.FC = ({ children }) => {
   return (
     <Drawer>
       {/* On Desktop */}
-      <div className="hidden lg:block w-full px-5">
+      <div className="hidden w-full px-5 lg:block">
         <Header />
         {children}
       </div>
       {/* On Mobile */}
-      <div className="text-xs text-center lg:hidden w-full px-2">{children}</div>
+      <div className="w-full px-2 text-center text-xs lg:hidden">{children}</div>
     </Drawer>
   );
 };
