@@ -52,7 +52,7 @@ const reducer = (state: RegisterInput, action: ActionType): RegisterInput => {
 
     case ACTIONS.SET_EMAIL:
       if (action.payload !== undefined) {
-        return { ...state, email: action.payload };
+        return { ...state, username: action.payload, email: action.payload };
       }
       return state;
 
@@ -144,7 +144,7 @@ const Register: React.FC = () => {
 
       <div className="absolute top-5 left-5 z-10">
         <Link href="/" passHref>
-          <button className="btn btn-lg btn-circle">
+          <button className="btn btn-circle btn-lg">
             <MdHome className="text-3xl" />
           </button>
         </Link>
@@ -152,7 +152,7 @@ const Register: React.FC = () => {
 
       <div className="card bg-base-200 p-10 lg:w-3/12">
         <div className="form-control">
-          <label className="label">
+          {/* <label className="label">
             <span className="label-text">Username</span>
           </label>
           <input
@@ -161,7 +161,7 @@ const Register: React.FC = () => {
             className="input"
             value={state.username}
             onChange={(e) => dispatch({ type: ACTIONS.SET_USERNAME, payload: e.target.value })}
-          />
+          /> */}
 
           <label className="label">
             <span className="label-text">Email</span>
@@ -204,7 +204,7 @@ const Register: React.FC = () => {
             Register
           </button>
           <label className="label">
-            <span className="label-text-alt text-info cursor-pointer">
+            <span className="label-text-alt cursor-pointer text-info">
               <Link href="/auth/login">Login</Link>
             </span>
           </label>
