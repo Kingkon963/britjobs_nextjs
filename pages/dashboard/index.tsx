@@ -6,10 +6,13 @@ import { AuthContext } from "src/contexts/AuthContext";
 import { useLazyQuery } from "@apollo/client";
 import GetContactDetails from "@graphQL/queries/GetContactDetails.gql";
 import { GetContactDetailsQuery } from "@graphQL/graphql-operations";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const Dashboard: NextPage = () => {
   const [profileIsIncomplete, setProfileIsIncomplete] = useState(false);
   const { state: authState } = useContext(AuthContext);
+  const router = useRouter();
   const [runGetContactDetails, { loading, error, data }] =
     useLazyQuery<GetContactDetailsQuery>(GetContactDetails);
 
@@ -20,8 +23,10 @@ const Dashboard: NextPage = () => {
           userID: authState.userInfo?.id,
         },
       });
+    } else {
+      router.push("/");
     }
-  }, [authState, runGetContactDetails]);
+  }, [authState, router, runGetContactDetails]);
 
   useEffect(() => {
     console.log(data);
@@ -42,11 +47,13 @@ const Dashboard: NextPage = () => {
       <>
         {profileIsIncomplete && (
           <div
-            className="sticky top-0 z-50 flex items-center justify-center gap-5 
-        bg-info py-2 font-bold tracking-wider text-base-200"
+            className="bg-info text-base-200 sticky top-0 z-50 flex items-center 
+        justify-center gap-5 py-2 font-bold tracking-wider"
           >
             <span>Your profile is incomplete!</span>
-            <button className="btn btn-primary btn-sm">Complete Profile</button>
+            <Link passHref href="/auth/completeProfile">
+              <button className="btn btn-primary btn-sm">Complete Profile</button>
+            </Link>
           </div>
         )}
         <Layout>
