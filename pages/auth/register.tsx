@@ -15,6 +15,7 @@ import { AuthContext, AUTH_ACTIONS } from "src/contexts/AuthContext";
 import { useRouter } from "next/router";
 
 enum ACTIONS {
+  SET_USERTYPE,
   SET_USERNAME,
   SET_EMAIL,
   SET_PASSWORD,
@@ -24,26 +25,42 @@ enum ACTIONS {
   RESET,
 }
 
-interface ActionType {
+interface Action {
   type: ACTIONS;
   payload?: string;
 }
 
+enum UserTypes {
+  JOB_PROVIDER = "job_provider",
+  JOB_SEEKER = "job_seeker",
+}
+
 interface RegisterInput extends UsersPermissionsRegisterInput {
-  error?: string;
   confirmPass: string;
 }
 
-const initState: RegisterInput = {
+interface RegisterPageState extends RegisterInput {
+  error?: string;
+  userType: string;
+}
+
+const initState: RegisterPageState = {
   username: "",
   email: "",
   password: "",
   confirmPass: "",
   error: undefined,
+  userType: UserTypes.JOB_SEEKER,
 };
 
-const reducer = (state: RegisterInput, action: ActionType): RegisterInput => {
+const reducer = (state: RegisterPageState, action: Action): RegisterPageState => {
   switch (action.type) {
+    case ACTIONS.SET_USERTYPE:
+      if (action.payload !== undefined) {
+        return { ...state, userType: action.payload };
+      }
+      return state;
+
     case ACTIONS.SET_USERNAME:
       if (action.payload !== undefined) {
         return { ...state, username: action.payload };
@@ -102,8 +119,11 @@ const Register: React.FC = () => {
       dispatch({ type: ACTIONS.SET_ERROR, payload: "Please provide an email" });
       return false;
     }
-    if (state.password.length === 0) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: "Please provide a password" });
+    if (state.password.length === 0 || state.password.length < 6) {
+      dispatch({
+        type: ACTIONS.SET_ERROR,
+        payload: "Please provide a password greater than 6 charecter",
+      });
       return false;
     }
     if (state.password !== state.confirmPass) {
@@ -121,19 +141,15 @@ const Register: React.FC = () => {
     if (isValidData()) {
       runRegister({
         variables: { username: state.username, email: state.email, password: state.password },
+      }).then(() => {
+        dispatch({ type: ACTIONS.RESET });
+        if (authDispatch) {
+          authDispatch({ type: AUTH_ACTIONS.REGISTER, payload: data });
+          router.push("/");
+        }
       });
     }
   };
-
-  React.useEffect(() => {
-    if (data) {
-      dispatch({ type: ACTIONS.RESET });
-      if (authDispatch) {
-        authDispatch({ type: AUTH_ACTIONS.REGISTER, payload: data });
-        router.push("/");
-      }
-    }
-  }, [authDispatch, data, router]);
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -150,84 +166,122 @@ const Register: React.FC = () => {
         </Link>
       </div>
 
-      <div className="card bg-base-200 p-10 lg:w-3/12">
-        <div className="form-control">
-          {/* <label className="label">
-            <span className="label-text">Username</span>
-          </label>
-          <input
-            type="text"
-            placeholder="username"
-            className="input"
-            value={state.username}
-            onChange={(e) => dispatch({ type: ACTIONS.SET_USERNAME, payload: e.target.value })}
-          /> */}
+      {/* <div className="input-group-lg max-w-xs">
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">I&apos;m searching Job</span>
+              <input type="radio" name="radio-6" className="radio checked:bg-red-500" checked />
+            </label>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">I&apos;m hiring</span>
+              <input type="radio" name="radio-6" className="radio checked:bg-blue-500" checked />
+            </label>
+          </div>
+        </div> */}
 
-          <label className="label">
-            <span className="label-text">Email</span>
-          </label>
-          <input
-            type="email"
-            placeholder="email"
-            className="input"
-            value={state.email}
-            onChange={(e) => dispatch({ type: ACTIONS.SET_EMAIL, payload: e.target.value })}
-          />
-
-          <label className="label">
-            <span className="label-text">Password</span>
-          </label>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            className="input"
-            value={state.password}
-            onChange={(e) => dispatch({ type: ACTIONS.SET_PASSWORD, payload: e.target.value })}
-          />
-
-          <label className="label">
-            <span className="label-text">Confirm Password</span>
-          </label>
-          <input
-            type="password"
-            placeholder="Enter your password again"
-            className="input"
-            value={state.confirmPass}
-            onChange={(e) => dispatch({ type: ACTIONS.SET_CONF_PASSWORD, payload: e.target.value })}
-          />
-
-          <button
-            className={`btn btn-primary mt-5 ${loading ? "loading" : ""}`}
-            onClick={() => register()}
-            disabled={loading}
-          >
-            Register
-          </button>
-          <label className="label">
-            <span className="label-text-alt cursor-pointer text-info">
-              <Link href="/auth/login">Login</Link>
-            </span>
-          </label>
-        </div>
-        <div className="mt-2 flex flex-col gap-2">
-          {state.error !== undefined && (
-            <div className="alert alert-error">
-              <div className="flex-1 items-center gap-2">
-                <MdError className="text-lg" />
-                <label>{state.error}</label>
-              </div>
+      <div className="w-full max-w-xl">
+        <div className="card bg-base-200 p-10">
+          <div className="form-control">
+            <div className="flex flex-col">
+              <label className="label w-fit cursor-pointer">
+                <input
+                  type="radio"
+                  name="radio-6"
+                  className="radio invisible mr-5 checked:visible checked:animate-spin checked:bg-red-500"
+                  checked={state.userType === UserTypes.JOB_SEEKER}
+                  onClick={() =>
+                    dispatch({ type: ACTIONS.SET_USERTYPE, payload: UserTypes.JOB_SEEKER })
+                  }
+                />
+                <span className="label-text text-lg">I&apos;m searching Jobs</span>
+              </label>
+              <label className="label w-fit cursor-pointer">
+                <input
+                  type="radio"
+                  name="radio-6"
+                  className="radio invisible mr-5 checked:visible checked:animate-spin checked:bg-red-500"
+                  checked={state.userType === UserTypes.JOB_PROVIDER}
+                  onClick={() => {
+                    dispatch({ type: ACTIONS.SET_USERTYPE, payload: UserTypes.JOB_PROVIDER });
+                  }}
+                />
+                <span className="label-text text-lg">I&apos;m hiring</span>
+              </label>
             </div>
-          )}
-          {error?.graphQLErrors.map(({ message }) => {
-            return (
-              <div className="alert alert-error" key={keyGen()}>
+
+            <div className="divider"></div>
+            {/* <div className="form-control">
+              <label className="label">
+                <span className="label-text">Email</span>
+              </label>
+              <input
+                type="email"
+                placeholder="email"
+                className="input"
+                value={state.email}
+                onChange={(e) => dispatch({ type: ACTIONS.SET_EMAIL, payload: e.target.value })}
+              />
+
+              <label className="label">
+                <span className="label-text">Password</span>
+              </label>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                className="input"
+                value={state.password}
+                onChange={(e) => dispatch({ type: ACTIONS.SET_PASSWORD, payload: e.target.value })}
+              />
+
+              <label className="label">
+                <span className="label-text">Confirm Password</span>
+              </label>
+              <input
+                type="password"
+                placeholder="Enter your password again"
+                className="input"
+                value={state.confirmPass}
+                onChange={(e) =>
+                  dispatch({ type: ACTIONS.SET_CONF_PASSWORD, payload: e.target.value })
+                }
+              />
+
+              <button
+                className={`btn btn-primary mt-5 ${loading ? "loading" : ""}`}
+                onClick={() => register()}
+                disabled={loading}
+              >
+                Register
+              </button>
+              <label className="label">
+                <span className="label-text-alt cursor-pointer text-info">
+                  <Link href="/auth/login">Login</Link>
+                </span>
+              </label>
+            </div> */}
+          </div>
+          <div className="mt-2 flex flex-col gap-2">
+            {state.error !== undefined && (
+              <div className="alert alert-error">
                 <div className="flex-1 items-center gap-2">
                   <MdError className="text-lg" />
-                  <label>{message}</label>
+                  <label>{state.error}</label>
                 </div>
               </div>
-            );
-          })}
+            )}
+            {error?.graphQLErrors.map(({ message }) => {
+              return (
+                <div className="alert alert-error" key={keyGen()}>
+                  <div className="flex-1 items-center gap-2">
+                    <MdError className="text-lg" />
+                    <label>{message}</label>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

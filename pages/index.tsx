@@ -4,6 +4,7 @@ import Head from "next/head";
 import Layout from "@components/Layout";
 import { AuthContext } from "src/contexts/AuthContext";
 import Image from "next/image";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   return (
@@ -18,8 +19,12 @@ const Home: NextPage = () => {
         <h1 className="text-5xl">Britjobs</h1>
         <div className="ml-auto flex gap-2">
           <button className="btn">Hire</button>
-          <button className="btn">Login</button>
-          <button className="btn">Register</button>
+          <Link href={"auth/login"} passHref>
+            <button className="btn">Login</button>
+          </Link>
+          <Link href={"auth/register"} passHref>
+            <button className="btn">Register</button>
+          </Link>
         </div>
       </header>
       <main>
