@@ -4,6 +4,10 @@ import { Pool } from "pg";
 import type { Adapter, AdapterUser } from "next-auth/adapters";
 import { NextApiRequest, NextApiResponse } from "next";
 
+interface AdapterOptions {
+  provider: string | undefined;
+}
+
 const getUserFromStrapi = async (provider: string, access_token: string) => {
   const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/${provider}/callback`);
   url.searchParams.set("access_token", access_token as string);
@@ -26,6 +30,18 @@ const printUsersTable = async (client: Pool) => {
   }
 };
 
+const printUserRolesTable = async (client: Pool) => {
+  try {
+    const sql = `
+      select * from up_roles
+    `;
+    const result = await client.query(sql);
+    console.log("roles table", result.rows);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const pool = new Pool({
   user: "strapi",
   host: "localhost",
@@ -34,7 +50,8 @@ const pool = new Pool({
   port: 5432,
 });
 
-function PostgresAdapter(client: Pool, options = {}): Adapter {
+function PostgresAdapter(client: Pool, options = {} as AdapterOptions): Adapter {
+  console.log("PostgresAdapter", options);
   return {
     async createUser(user) {
       console.log("createUser", user);
@@ -46,10 +63,12 @@ function PostgresAdapter(client: Pool, options = {}): Adapter {
         let result = await client.query(sql, [
           user.name,
           user.email,
-          "google",
+          options.provider,
           user.image,
           /*user.emailVerified*/ true,
         ]);
+        // await printUsersTable(client);
+        // await printUserRolesTable(client);
         return result.rows[0];
       } catch (err) {
         console.log(err);
@@ -179,6 +198,12 @@ function PostgresAdapter(client: Pool, options = {}): Adapter {
 }
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+  console.log("auth", req.method, req.url, req.query, req.body);
+  let provider = undefined;
+  if (req.query.nextauth[0] === "callback") {
+    provider = req.query.nextauth[1];
+  }
+
   return await NextAuth(req, res, {
     providers: [
       GoogleProvider({
@@ -188,7 +213,9 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     ],
     //database: process.env.NEXT_PUBLIC_DATABASE_URL,
     secret: process.env.NEXTAUTH_SECRET,
-    adapter: PostgresAdapter(pool),
+    adapter: PostgresAdapter(pool, {
+      provider: provider,
+    }),
     session: {
       strategy: "jwt",
       maxAge: 60 * 60 * 24 * 7,
