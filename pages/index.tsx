@@ -5,8 +5,11 @@ import Layout from "@components/Layout";
 import { AuthContext } from "src/contexts/AuthContext";
 import Image from "next/image";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 
 const Home: NextPage = () => {
+  const { data: session } = useSession();
+
   return (
     <div>
       <Head>
@@ -18,13 +21,25 @@ const Home: NextPage = () => {
       <header className="flex items-center p-5">
         <h1 className="text-5xl">Britjobs</h1>
         <div className="ml-auto flex gap-2">
-          <button className="btn">Hire</button>
-          <Link href={"auth/login"} passHref>
-            <button className="btn">Login</button>
-          </Link>
-          <Link href={"auth/register"} passHref>
-            <button className="btn">Register</button>
-          </Link>
+          {!session && (
+            <>
+              <button className="btn">Hire</button>
+              <Link href={"/auth/login"} passHref>
+                <button className="btn">Login</button>
+              </Link>
+              <Link href={"/auth/register"} passHref>
+                <button className="btn">Register</button>
+              </Link>
+            </>
+          )}
+          {session && (
+            <>
+              <p>{session.user?.email}</p>
+              <p className="link" onClick={() => signOut()}>
+                signout?
+              </p>
+            </>
+          )}
         </div>
       </header>
       <main>
@@ -32,8 +47,8 @@ const Home: NextPage = () => {
           <div className="w-[50vw]">
             <h1 className="mb-5 text-5xl">Find a Job Today</h1>
             <div className="flex justify-center gap-5 rounded-2xl bg-slate-200 p-5">
-              <input type="text" className="input w-full  bg-base-100" placeholder="Position" />
-              <input type="text" className="input w-full  bg-base-100" placeholder="City" />
+              <input type="text" className="input bg-base-100  w-full" placeholder="Position" />
+              <input type="text" className="input bg-base-100  w-full" placeholder="City" />
               <button className="btn btn-primary">Search</button>
             </div>
           </div>
@@ -52,7 +67,7 @@ const Home: NextPage = () => {
                 width={400}
                 height={225}
               />
-              <div className="absolute bottom-0 h-fit w-full bg-gradient-to-t from-base-200  to-transparent px-7">
+              <div className="from-base-200 absolute bottom-0 h-fit w-full bg-gradient-to-t  to-transparent px-7">
                 <h2 className="card-title py-2 text-2xl">Shoe store management</h2>
               </div>
             </figure>

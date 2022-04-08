@@ -13,6 +13,7 @@ import { useMutation } from "@apollo/client";
 import keyGen from "@utils/genKey";
 import { AuthContext, AUTH_ACTIONS } from "src/contexts/AuthContext";
 import { useRouter } from "next/router";
+import { signIn, useSession, getCsrfToken, getSession } from "next-auth/react";
 
 enum ACTIONS {
   SET_USERTYPE,
@@ -109,6 +110,7 @@ const Register: React.FC = () => {
   });
   const { state: authState, dispatch: authDispatch } = useContext(AuthContext);
   const router = useRouter();
+  const { data: session } = useSession();
 
   const isValidData = (): boolean => {
     if (state.username.length === 0) {
@@ -134,22 +136,9 @@ const Register: React.FC = () => {
     return true;
   };
 
-  const register = () => {
-    dispatch({ type: ACTIONS.RESET_ERROR });
-
-    console.log(state);
-    if (isValidData()) {
-      runRegister({
-        variables: { username: state.username, email: state.email, password: state.password },
-      }).then(() => {
-        dispatch({ type: ACTIONS.RESET });
-        if (authDispatch) {
-          authDispatch({ type: AUTH_ACTIONS.REGISTER, payload: data });
-          router.push("/");
-        }
-      });
-    }
-  };
+  if (session) {
+    router.push("/");
+  }
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -184,13 +173,15 @@ const Register: React.FC = () => {
       <div className="w-full max-w-xl">
         <div className="card bg-base-200 p-10">
           <div className="form-control">
+            {/* UserType Selection */}
             <div className="flex flex-col">
               <label className="label w-fit cursor-pointer">
                 <input
                   type="radio"
                   name="radio-6"
-                  className="radio invisible mr-5 checked:visible checked:animate-spin checked:bg-red-500"
+                  className="radio  mr-5  checked:animate-spin checked:bg-red-500"
                   checked={state.userType === UserTypes.JOB_SEEKER}
+                  readOnly
                   onClick={() =>
                     dispatch({ type: ACTIONS.SET_USERTYPE, payload: UserTypes.JOB_SEEKER })
                   }
@@ -201,8 +192,9 @@ const Register: React.FC = () => {
                 <input
                   type="radio"
                   name="radio-6"
-                  className="radio invisible mr-5 checked:visible checked:animate-spin checked:bg-red-500"
+                  className="radio  mr-5  checked:animate-spin checked:bg-red-500"
                   checked={state.userType === UserTypes.JOB_PROVIDER}
+                  readOnly
                   onClick={() => {
                     dispatch({ type: ACTIONS.SET_USERTYPE, payload: UserTypes.JOB_PROVIDER });
                   }}
@@ -212,6 +204,18 @@ const Register: React.FC = () => {
             </div>
 
             <div className="divider"></div>
+
+            <button
+              className="btn bg-blue-500"
+              onClick={() =>
+                signIn("google", {
+                  callbackUrl: "/",
+                })
+              }
+            >
+              Signin with Google
+            </button>
+
             {/* <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>
