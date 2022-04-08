@@ -51,7 +51,7 @@ const pool = new Pool({
 });
 
 function PostgresAdapter(client: Pool, options = {} as AdapterOptions): Adapter {
-  console.log("PostgresAdapter", options);
+  // console.log("PostgresAdapter", options);
   return {
     async createUser(user) {
       console.log("createUser", user);
@@ -229,14 +229,23 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       async session({ session, token, user }) {
         session.jwt = token.jwt;
         session.id = token.id;
+        session.user = {
+          email: token.email,
+          name: token.name,
+          image: token.picture,
+        };
         return session;
       },
       async jwt({ token, account }) {
+        //console.log("jwt", account);
         if (account?.access_token) {
           const data = await getUserFromStrapi(account.provider, account.access_token);
-          // console.log(data);
+          console.log(data);
           token.jwt = data.jwt;
           token.id = data.user.id;
+          token.email = data.user.email;
+          token.name = data.user.username;
+          token.picture = data.user.image;
         }
         return token;
       },
