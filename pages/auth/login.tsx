@@ -6,7 +6,6 @@ import LOGIN from "@graphQL/mutations/login.gql";
 import { useMutation } from "@apollo/client";
 import { LoginMutation } from "@graphQL/graphql-operations";
 import keyGen from "@utils/genKey";
-import { AuthContext, AUTH_ACTIONS } from "src/contexts/AuthContext";
 import { useRouter } from "next/router";
 
 enum ACTIONS {
@@ -65,7 +64,6 @@ const Login: React.FC = () => {
   const [runLogin, { loading, data, error }] = useMutation<LoginMutation>(LOGIN, {
     errorPolicy: "all",
   });
-  const { dispatch: AuthDispatch } = React.useContext(AuthContext);
   const router = useRouter();
 
   const isValidData = (): boolean => {
@@ -104,13 +102,6 @@ const Login: React.FC = () => {
     }
   }, [error]);
 
-  React.useEffect(() => {
-    if (data && AuthDispatch) {
-      AuthDispatch({ type: AUTH_ACTIONS.LOGIN, payload: data });
-      router.push("/");
-    }
-  }, [data, AuthDispatch, router]);
-
   return (
     <div className="flex h-screen items-center justify-center">
       <Head>
@@ -126,7 +117,7 @@ const Login: React.FC = () => {
         </Link>
       </div>
 
-      <div className="card w-3/12 bg-base-200 p-10">
+      <div className="card bg-base-200 w-3/12 p-10">
         <div className="form-control">
           <label className="label">
             <span className="label-text">Email</span>
@@ -158,7 +149,7 @@ const Login: React.FC = () => {
             Login
           </button>
           <label className="label">
-            <span className="label-text-alt cursor-pointer text-info">
+            <span className="label-text-alt text-info cursor-pointer">
               <Link href="/auth/register">Register</Link>
             </span>
           </label>

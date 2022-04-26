@@ -1,14 +1,16 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useRef } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Layout from "@components/Layout";
-import { AuthContext } from "src/contexts/AuthContext";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
+  const renderCounter = useRef(0);
+  renderCounter.current = renderCounter.current + 1;
+  console.log("renderCounter", renderCounter.current);
   console.log(session);
   return (
     <div>

@@ -11,7 +11,6 @@ import {
 import REGISTER from "@graphQL/mutations/register.gql";
 import { useMutation } from "@apollo/client";
 import keyGen from "@utils/genKey";
-import { AuthContext, AUTH_ACTIONS } from "src/contexts/AuthContext";
 import { useRouter } from "next/router";
 import { signIn, useSession, getCsrfToken, getSession } from "next-auth/react";
 
@@ -28,12 +27,12 @@ enum ACTIONS {
 
 interface Action {
   type: ACTIONS;
-  payload?: string;
+  payload?: string | number;
 }
 
 enum UserTypes {
-  JOB_PROVIDER = "job_provider",
-  JOB_SEEKER = "job_seeker",
+  JOB_PROVIDER = 3,
+  JOB_SEEKER = 4,
 }
 
 interface RegisterInput extends UsersPermissionsRegisterInput {
@@ -42,7 +41,7 @@ interface RegisterInput extends UsersPermissionsRegisterInput {
 
 interface RegisterPageState extends RegisterInput {
   error?: string;
-  userType: string;
+  userType: number;
 }
 
 const initState: RegisterPageState = {
@@ -57,37 +56,37 @@ const initState: RegisterPageState = {
 const reducer = (state: RegisterPageState, action: Action): RegisterPageState => {
   switch (action.type) {
     case ACTIONS.SET_USERTYPE:
-      if (action.payload !== undefined) {
+      if (action.payload !== undefined && typeof action.payload === "number") {
         return { ...state, userType: action.payload };
       }
       return state;
 
     case ACTIONS.SET_USERNAME:
-      if (action.payload !== undefined) {
+      if (action.payload !== undefined && typeof action.payload === "string") {
         return { ...state, username: action.payload };
       }
       return state;
 
     case ACTIONS.SET_EMAIL:
-      if (action.payload !== undefined) {
+      if (action.payload !== undefined && typeof action.payload === "string") {
         return { ...state, username: action.payload, email: action.payload };
       }
       return state;
 
     case ACTIONS.SET_PASSWORD:
-      if (action.payload !== undefined) {
+      if (action.payload !== undefined && typeof action.payload === "string") {
         return { ...state, password: action.payload };
       }
       return state;
 
     case ACTIONS.SET_CONF_PASSWORD:
-      if (action.payload !== undefined) {
+      if (action.payload !== undefined && typeof action.payload === "string") {
         return { ...state, confirmPass: action.payload };
       }
       return state;
 
     case ACTIONS.SET_ERROR:
-      if (action.payload !== undefined) {
+      if (action.payload !== undefined && typeof action.payload === "string") {
         return { ...state, error: action.payload };
       }
       return state;
@@ -108,7 +107,6 @@ const Register: React.FC = () => {
   const [runRegister, { loading, data, error }] = useMutation<RegisterMutation>(REGISTER, {
     errorPolicy: "all",
   });
-  const { state: authState, dispatch: authDispatch } = useContext(AuthContext);
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -154,21 +152,6 @@ const Register: React.FC = () => {
           </button>
         </Link>
       </div>
-
-      {/* <div className="input-group-lg max-w-xs">
-          <div className="form-control">
-            <label className="label cursor-pointer">
-              <span className="label-text">I&apos;m searching Job</span>
-              <input type="radio" name="radio-6" className="radio checked:bg-red-500" checked />
-            </label>
-          </div>
-          <div className="form-control">
-            <label className="label cursor-pointer">
-              <span className="label-text">I&apos;m hiring</span>
-              <input type="radio" name="radio-6" className="radio checked:bg-blue-500" checked />
-            </label>
-          </div>
-        </div> */}
 
       <div className="w-full max-w-xl">
         <div className="card bg-base-200 p-10">

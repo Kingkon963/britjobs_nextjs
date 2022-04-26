@@ -1,16 +1,12 @@
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import * as React from "react";
-import { AuthContext, AUTH_ACTIONS } from "src/contexts/AuthContext";
 import defaultProfilePic from "src/assets/svg/defaultProfilePic";
 
 const Header: React.FC = () => {
-  const { state: AuthState, dispatch } = React.useContext(AuthContext);
+  const session = useSession();
 
-  const handleLogout = () => {
-    if (dispatch) {
-      dispatch({ type: AUTH_ACTIONS.LOGOUT });
-    }
-  };
+  const handleLogout = () => {};
 
   return (
     <div className="border-base-100 flex items-center border-b py-3">
@@ -18,7 +14,7 @@ const Header: React.FC = () => {
         <h1 className="text-4xl tracking-wider">Britjobs</h1>
       </div>
       <div className="ml-auto flex gap-2">
-        {!AuthState.isLogedin && (
+        {!session && (
           <>
             <Link href="/auth/login" passHref>
               <button className="btn btn-primary">Login</button>
@@ -28,7 +24,7 @@ const Header: React.FC = () => {
             </Link>
           </>
         )}
-        {AuthState.isLogedin && (
+        {session && (
           <>
             <div className="dropdown dropdown-end">
               <button tabIndex={0} className="btn btn-circle bg-base-100 p-0">

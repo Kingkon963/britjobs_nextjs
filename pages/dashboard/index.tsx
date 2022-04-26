@@ -2,35 +2,35 @@ import { useEffect, useState, useContext } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Layout from "@components/Layout";
-import { AuthContext } from "src/contexts/AuthContext";
 import { useLazyQuery } from "@apollo/client";
-import GetContactDetails from "@graphQL/queries/GetContactDetails.gql";
-import { GetContactDetailsQuery } from "@graphQL/graphql-operations";
+import GetContactDetail from "@graphQL/queries/GetContactDetail.gql";
+import { GetContactDetailQuery } from "@graphQL/graphql-operations";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const Dashboard: NextPage = () => {
   const [profileIsIncomplete, setProfileIsIncomplete] = useState(false);
-  const { state: authState } = useContext(AuthContext);
+  const session = useSession();
   const router = useRouter();
   const [runGetContactDetails, { loading, error, data }] =
-    useLazyQuery<GetContactDetailsQuery>(GetContactDetails);
+    useLazyQuery<GetContactDetailQuery>(GetContactDetail);
 
   useEffect(() => {
-    if (authState.isLogedin) {
+    if (session.data) {
       runGetContactDetails({
         variables: {
-          userID: authState.userInfo?.id,
+          userID: session.data.id,
         },
       });
     } else {
-      router.push("/");
+      // router.push("/");
     }
-  }, [authState, router, runGetContactDetails]);
+  }, [router, runGetContactDetails, session.data]);
 
   useEffect(() => {
     console.log(data);
-    if (data?.contactDetails?.data && data?.contactDetails?.data.length > 0) {
+    if (data?.contactDetail?.data) {
       setProfileIsIncomplete(false);
     } else {
       if (data !== undefined) setProfileIsIncomplete(true);
@@ -59,9 +59,9 @@ const Dashboard: NextPage = () => {
         <Layout>
           <div className="py-10">
             <div className="flex flex-col items-start justify-center">
-              {authState.isLogedin && authState.userInfo?.username && (
+              {/* {authState.isLogedin && authState.userInfo?.username && (
                 <h1 className="text-6xl">Welcome, {authState.userInfo?.username}!</h1>
-              )}
+              )} */}
             </div>
           </div>
         </Layout>

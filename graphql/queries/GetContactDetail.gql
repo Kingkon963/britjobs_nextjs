@@ -1,5 +1,5 @@
-query GetContactDetails($userID: ID!) {
-  contactDetails(filters: { user: { id: { eq: $userID } } }) {
+query GetContactDetail($userID: ID!) {
+  contactDetail(id: $userID) {
     data {
       id
       attributes {
