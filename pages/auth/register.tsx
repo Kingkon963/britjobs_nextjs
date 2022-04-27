@@ -16,72 +16,43 @@ import { signIn, useSession, getCsrfToken, getSession } from "next-auth/react";
 
 enum ACTIONS {
   SET_USERTYPE,
-  SET_USERNAME,
-  SET_EMAIL,
-  SET_PASSWORD,
-  SET_CONF_PASSWORD,
   SET_ERROR,
   RESET_ERROR,
   RESET,
 }
+
+const UserTypes = {
+  AUTHENTICATED: process.env.NEXT_PUBLIC_AUTHENTICATED_ROLE_ID
+    ? parseInt(process.env.NEXT_PUBLIC_AUTHENTICATED_ROLE_ID, 10)
+    : undefined,
+  JOB_PROVIDER: process.env.NEXT_PUBLIC_JOB_PROVIDER_ROLE_ID
+    ? parseInt(process.env.NEXT_PUBLIC_JOB_PROVIDER_ROLE_ID, 10)
+    : undefined,
+  JOB_SEEKER: process.env.NEXT_PUBLIC_JOB_SEEKER_ROLE_ID
+    ? parseInt(process.env.NEXT_PUBLIC_JOB_SEEKER_ROLE_ID, 10)
+    : undefined,
+};
 
 interface Action {
   type: ACTIONS;
   payload?: string | number;
 }
 
-enum UserTypes {
-  JOB_PROVIDER = 3,
-  JOB_SEEKER = 4,
-}
-
-interface RegisterInput extends UsersPermissionsRegisterInput {
-  confirmPass: string;
-}
-
-interface RegisterPageState extends RegisterInput {
+interface InitStateType {
   error?: string;
-  userType: number;
+  userType?: number;
 }
 
-const initState: RegisterPageState = {
-  username: "",
-  email: "",
-  password: "",
-  confirmPass: "",
+const initState: InitStateType = {
   error: undefined,
   userType: UserTypes.JOB_SEEKER,
 };
 
-const reducer = (state: RegisterPageState, action: Action): RegisterPageState => {
+const reducer = (state: InitStateType, action: Action): InitStateType => {
   switch (action.type) {
     case ACTIONS.SET_USERTYPE:
       if (action.payload !== undefined && typeof action.payload === "number") {
         return { ...state, userType: action.payload };
-      }
-      return state;
-
-    case ACTIONS.SET_USERNAME:
-      if (action.payload !== undefined && typeof action.payload === "string") {
-        return { ...state, username: action.payload };
-      }
-      return state;
-
-    case ACTIONS.SET_EMAIL:
-      if (action.payload !== undefined && typeof action.payload === "string") {
-        return { ...state, username: action.payload, email: action.payload };
-      }
-      return state;
-
-    case ACTIONS.SET_PASSWORD:
-      if (action.payload !== undefined && typeof action.payload === "string") {
-        return { ...state, password: action.payload };
-      }
-      return state;
-
-    case ACTIONS.SET_CONF_PASSWORD:
-      if (action.payload !== undefined && typeof action.payload === "string") {
-        return { ...state, confirmPass: action.payload };
       }
       return state;
 
@@ -111,8 +82,14 @@ const Register: React.FC = () => {
   const { data: session } = useSession();
 
   const handleSignIn = () => {
-    if (!session) {
-      signIn("google");
+    if (session) dispatch({ type: ACTIONS.SET_ERROR, payload: "You are already Logged in!" });
+    if (typeof state.userType === undefined || typeof state.userType !== "number")
+      dispatch({ type: ACTIONS.SET_ERROR, payload: "Please select a user type" });
+    console.log(state);
+    if (typeof state.error !== undefined) {
+      signIn("google", {
+        userRole: state.userType,
+      });
     }
   };
 
@@ -171,7 +148,7 @@ const Register: React.FC = () => {
 
             <div className="divider"></div>
 
-            <button className="btn bg-blue-500" onClick={() => handleSignIn()}>
+            <button className="btn btn-primary" onClick={() => handleSignIn()}>
               Signin with Google
             </button>
           </div>

@@ -5,11 +5,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 import getUserFromStrapi from "@utils/getUserFromStrapi";
 import PostgresAdapter from "@utils/postgresAdapter";
 
+let provider: string | undefined = undefined;
+let userRole: number | undefined = undefined;
+
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
   console.log("auth", req.method, req.url, req.query, req.body);
-  let provider = undefined;
-  if (req.query.nextauth[0] === "callback") {
+  if (req.query.nextauth[0] === "signin") {
     provider = req.query.nextauth[1];
+    userRole = req.body.userRole ? parseInt(req.body.userRole, 10) : undefined;
   }
 
   return await NextAuth(req, res, {
@@ -22,6 +25,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     secret: process.env.NEXTAUTH_SECRET,
     adapter: PostgresAdapter(undefined, {
       provider: provider,
+      userRole: userRole,
     }),
     session: {
       strategy: "jwt",

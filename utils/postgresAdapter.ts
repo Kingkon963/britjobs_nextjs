@@ -4,6 +4,7 @@ import getUserFromStrapi from "./getUserFromStrapi";
 
 interface AdapterOptions {
   provider: string | undefined;
+  userRole: number | undefined;
 }
 
 const assignUserToRole = async (client: Pool, userId: number, roleId: number) => {
@@ -41,14 +42,17 @@ function PostgresAdapter(client: Pool = pool, options = {} as AdapterOptions): A
         VALUES ($1, $2, $3, $4, $5)
         RETURNING id`;
         let result = await client.query(sql, [
-          user.name,
+          `${user.name}-${user.email}`,
           user.email,
           options.provider,
           user.image,
           /*user.emailVerified*/ true,
         ]);
 
-        await assignUserToRole(client, result.rows[0].id, 1);
+        if (typeof options.userRole === "undefined") {
+          throw new Error("PostgresAdapter requires a userRole");
+        }
+        await assignUserToRole(client, result.rows[0].id, options.userRole as number);
 
         return result.rows[0];
       } catch (err) {
