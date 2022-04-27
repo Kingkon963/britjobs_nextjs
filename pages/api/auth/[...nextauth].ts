@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { Session, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 import { NextApiRequest, NextApiResponse } from "next";
@@ -36,23 +36,26 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       async session({ session, token, user }) {
         session.jwt = token.jwt;
         session.id = token.id;
+        //session.isNewUser = token.isNewUser;
         session.user = {
+          ...user,
           email: token.email,
           name: token.name,
           image: token.picture,
+          isNewUser: token.isNewUser,
         };
         return session;
       },
-      async jwt({ token, account }) {
-        //console.log("jwt", account);
+      async jwt({ token, account, isNewUser }) {
         if (account?.access_token) {
           const data = await getUserFromStrapi(account.provider, account.access_token);
-          //console.log(data);
+
           token.jwt = data.jwt;
           token.id = data.user.id;
           token.email = data.user.email;
           token.name = data.user.username;
           token.picture = data.user.image;
+          token.isNewUser = isNewUser;
         }
         return token;
       },

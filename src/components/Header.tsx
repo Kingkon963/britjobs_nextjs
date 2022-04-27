@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import * as React from "react";
 import defaultProfilePic from "src/assets/svg/defaultProfilePic";
@@ -6,7 +6,11 @@ import defaultProfilePic from "src/assets/svg/defaultProfilePic";
 const Header: React.FC = () => {
   const session = useSession();
 
-  const handleLogout = () => {};
+  const handleLogout = () => {
+    signOut({
+      callbackUrl: "/",
+    });
+  };
 
   return (
     <div className="border-base-100 flex items-center border-b py-3">

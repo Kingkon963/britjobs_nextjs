@@ -6,7 +6,6 @@ import LOGIN from "@graphQL/mutations/login.gql";
 import { useMutation } from "@apollo/client";
 import { LoginMutation } from "@graphQL/graphql-operations";
 import keyGen from "@utils/genKey";
-import { AuthContext, AUTH_ACTIONS } from "src/contexts/AuthContext";
 import { useRouter } from "next/router";
 import TextField from "@components/EditableTextField";
 
@@ -58,7 +57,6 @@ const CompleteProfile: React.FC = () => {
   const [runLogin, { loading, data, error }] = useMutation<LoginMutation>(LOGIN, {
     errorPolicy: "all",
   });
-  const { dispatch: AuthDispatch } = React.useContext(AuthContext);
   const router = useRouter();
 
   React.useEffect(() => {
@@ -66,13 +64,6 @@ const CompleteProfile: React.FC = () => {
       dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
     }
   }, [error]);
-
-  React.useEffect(() => {
-    if (data && AuthDispatch) {
-      AuthDispatch({ type: AUTH_ACTIONS.LOGIN, payload: data });
-      router.push("/");
-    }
-  }, [data, AuthDispatch, router]);
 
   return (
     <div className="flex h-screen justify-center gap-5">
@@ -94,7 +85,7 @@ const CompleteProfile: React.FC = () => {
         <li className="step">Receive Product</li>
       </ul>
 
-      <div className="card my-8 w-7/12 bg-base-200 p-10">
+      <div className="card bg-base-200 my-8 w-7/12 p-10">
         <div className="form-control">
           <div className="flex w-fit gap-5">
             <div className="form-control">
@@ -133,7 +124,7 @@ const CompleteProfile: React.FC = () => {
             Login
           </button>
           <label className="label">
-            <span className="label-text-alt cursor-pointer text-info">
+            <span className="label-text-alt text-info cursor-pointer">
               <Link href="/register">Register</Link>
             </span>
           </label>

@@ -110,32 +110,15 @@ const Register: React.FC = () => {
   const router = useRouter();
   const { data: session } = useSession();
 
-  const isValidData = (): boolean => {
-    if (state.username.length === 0) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: "Please provide a username" });
-      return false;
+  const handleSignIn = () => {
+    if (!session) {
+      signIn("google");
     }
-    if (state.email.length === 0) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: "Please provide an email" });
-      return false;
-    }
-    if (state.password.length === 0 || state.password.length < 6) {
-      dispatch({
-        type: ACTIONS.SET_ERROR,
-        payload: "Please provide a password greater than 6 charecter",
-      });
-      return false;
-    }
-    if (state.password !== state.confirmPass) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: "Password doesn't match" });
-      return false;
-    }
-
-    return true;
   };
 
   if (session) {
-    router.push("/");
+    if (session.user.isNewUser) router.replace("/profile");
+    else router.replace("/dashboard");
   }
 
   return (
@@ -188,66 +171,9 @@ const Register: React.FC = () => {
 
             <div className="divider"></div>
 
-            <button
-              className="btn bg-blue-500"
-              onClick={() =>
-                signIn("google", {
-                  callbackUrl: "/",
-                })
-              }
-            >
+            <button className="btn bg-blue-500" onClick={() => handleSignIn()}>
               Signin with Google
             </button>
-
-            {/* <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                placeholder="email"
-                className="input"
-                value={state.email}
-                onChange={(e) => dispatch({ type: ACTIONS.SET_EMAIL, payload: e.target.value })}
-              />
-
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                className="input"
-                value={state.password}
-                onChange={(e) => dispatch({ type: ACTIONS.SET_PASSWORD, payload: e.target.value })}
-              />
-
-              <label className="label">
-                <span className="label-text">Confirm Password</span>
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your password again"
-                className="input"
-                value={state.confirmPass}
-                onChange={(e) =>
-                  dispatch({ type: ACTIONS.SET_CONF_PASSWORD, payload: e.target.value })
-                }
-              />
-
-              <button
-                className={`btn btn-primary mt-5 ${loading ? "loading" : ""}`}
-                onClick={() => register()}
-                disabled={loading}
-              >
-                Register
-              </button>
-              <label className="label">
-                <span className="label-text-alt cursor-pointer text-info">
-                  <Link href="/auth/login">Login</Link>
-                </span>
-              </label>
-            </div> */}
           </div>
           <div className="mt-2 flex flex-col gap-2">
             {state.error !== undefined && (
