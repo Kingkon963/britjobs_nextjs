@@ -20,7 +20,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <header className="flex items-center p-5">
+      <header className="flex items-center p-5 px-16">
         <h1 className="text-5xl">Britjobs</h1>
         <div className="ml-auto flex gap-2">
           {!session && (

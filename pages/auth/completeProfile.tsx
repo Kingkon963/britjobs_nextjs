@@ -2,9 +2,6 @@ import * as React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { MdHome, MdError } from "react-icons/md";
-import LOGIN from "@graphQL/mutations/login.gql";
-import { useMutation } from "@apollo/client";
-import { LoginMutation } from "@graphQL/graphql-operations";
 import keyGen from "@utils/genKey";
 import { useRouter } from "next/router";
 import TextField from "@components/EditableTextField";
@@ -54,16 +51,7 @@ const reducer = (prevState: LoginInterface, action: ActionType): LoginInterface 
 
 const CompleteProfile: React.FC = () => {
   const [state, dispatch] = React.useReducer(reducer, initState);
-  const [runLogin, { loading, data, error }] = useMutation<LoginMutation>(LOGIN, {
-    errorPolicy: "all",
-  });
   const router = useRouter();
-
-  React.useEffect(() => {
-    if (error?.message) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
-    }
-  }, [error]);
 
   return (
     <div className="flex h-screen justify-center gap-5">
@@ -120,9 +108,7 @@ const CompleteProfile: React.FC = () => {
             </a>
           </label>
 
-          <button className="btn btn-primary mt-5 max-w-lg" disabled={loading}>
-            Login
-          </button>
+          <button className="btn btn-primary mt-5 max-w-lg">Login</button>
           <label className="label">
             <span className="label-text-alt text-info cursor-pointer">
               <Link href="/register">Register</Link>

@@ -3,13 +3,6 @@ import { useReducer, useContext } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { MdHome, MdError } from "react-icons/md";
-import {
-  RegisterMutation,
-  UsersPermissionsLoginPayload,
-  UsersPermissionsRegisterInput,
-} from "@graphQL/graphql-operations";
-import REGISTER from "@graphQL/mutations/register.gql";
-import { useMutation } from "@apollo/client";
 import keyGen from "@utils/genKey";
 import { useRouter } from "next/router";
 import { signIn, useSession, getCsrfToken, getSession } from "next-auth/react";
@@ -75,9 +68,6 @@ const reducer = (state: InitStateType, action: Action): InitStateType => {
 
 const Register: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initState);
-  const [runRegister, { loading, data, error }] = useMutation<RegisterMutation>(REGISTER, {
-    errorPolicy: "all",
-  });
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -161,16 +151,6 @@ const Register: React.FC = () => {
                 </div>
               </div>
             )}
-            {error?.graphQLErrors.map(({ message }) => {
-              return (
-                <div className="alert alert-error" key={keyGen()}>
-                  <div className="flex-1 items-center gap-2">
-                    <MdError className="text-lg" />
-                    <label>{message}</label>
-                  </div>
-                </div>
-              );
-            })}
           </div>
         </div>
       </div>

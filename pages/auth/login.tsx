@@ -2,9 +2,6 @@ import * as React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { MdHome, MdError } from "react-icons/md";
-import LOGIN from "@graphQL/mutations/login.gql";
-import { useMutation } from "@apollo/client";
-import { LoginMutation } from "@graphQL/graphql-operations";
 import keyGen from "@utils/genKey";
 import { useRouter } from "next/router";
 
@@ -61,9 +58,6 @@ const validateEmail = (email: String) => {
 
 const Login: React.FC = () => {
   const [state, dispatch] = React.useReducer(reducer, initState);
-  const [runLogin, { loading, data, error }] = useMutation<LoginMutation>(LOGIN, {
-    errorPolicy: "all",
-  });
   const router = useRouter();
 
   const isValidData = (): boolean => {
@@ -86,21 +80,8 @@ const Login: React.FC = () => {
   const login = () => {
     dispatch({ type: ACTIONS.RESET_ERROR });
     if (isValidData()) {
-      runLogin({
-        variables: {
-          identifier: state.identifier,
-          password: state.password,
-        },
-      });
     }
   };
-
-  React.useEffect(() => {
-    console.log(error?.graphQLErrors);
-    if (error?.message) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
-    }
-  }, [error]);
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -145,7 +126,7 @@ const Login: React.FC = () => {
               Forgot password?
             </a>
           </label>
-          <button className="btn btn-primary mt-5" onClick={() => login()} disabled={loading}>
+          <button className="btn btn-primary mt-5" onClick={() => login()}>
             Login
           </button>
           <label className="label">
