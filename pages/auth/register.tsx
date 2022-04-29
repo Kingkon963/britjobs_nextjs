@@ -112,7 +112,7 @@ const Register: React.FC = () => {
                 <input
                   type="radio"
                   name="radio-6"
-                  className="radio  mr-5  checked:animate-spin checked:bg-red-500"
+                  className="radio  checked:bg-primary  mr-5 checked:animate-spin"
                   checked={state.userType === UserTypes.JOB_SEEKER}
                   readOnly
                   onClick={() =>
@@ -125,7 +125,7 @@ const Register: React.FC = () => {
                 <input
                   type="radio"
                   name="radio-6"
-                  className="radio  mr-5  checked:animate-spin checked:bg-red-500"
+                  className="radio  checked:bg-primary  mr-5 checked:animate-spin"
                   checked={state.userType === UserTypes.JOB_PROVIDER}
                   readOnly
                   onClick={() => {

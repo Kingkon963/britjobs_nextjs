@@ -8,10 +8,11 @@ import { signOut, useSession } from "next-auth/react";
 import getContactDetails from "api/getContactDetails";
 import { useQuery } from "react-query";
 
-const Home: NextPage = () => {
+const LandingPage: NextPage = () => {
   const { data: session } = useSession();
   const query = useQuery("getContactDetails", getContactDetails);
   const renderCounter = useRef(0);
+
   renderCounter.current = renderCounter.current + 1;
   console.log("renderCounter", renderCounter.current);
 
@@ -56,8 +57,8 @@ const Home: NextPage = () => {
           <div className="w-[50vw]">
             <h1 className="mb-5 text-5xl">Find a Job Today</h1>
             <div className="flex justify-center gap-5 rounded-2xl bg-slate-200 p-5">
-              <input type="text" className="input bg-base-100  w-full" placeholder="Position" />
-              <input type="text" className="input bg-base-100  w-full" placeholder="City" />
+              <input type="text" className="input  w-full" placeholder="Position" />
+              <input type="text" className="input  w-full" placeholder="City" />
               <button className="btn btn-primary">Search</button>
             </div>
           </div>
@@ -103,4 +104,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default LandingPage;
