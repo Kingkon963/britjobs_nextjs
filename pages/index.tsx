@@ -5,13 +5,20 @@ import Layout from "@components/Layout";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import getContactDetails from "api/getContactDetails";
+import { useQuery } from "react-query";
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
+  const query = useQuery("getContactDetails", getContactDetails);
   const renderCounter = useRef(0);
   renderCounter.current = renderCounter.current + 1;
   console.log("renderCounter", renderCounter.current);
-  console.log(session);
+
+  useEffect(() => {
+    //console.log(query.data?.data.data);
+  }, [query]);
+
   return (
     <div>
       <Head>
