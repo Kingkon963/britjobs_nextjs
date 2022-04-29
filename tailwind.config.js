@@ -5,6 +5,7 @@ module.exports = {
   },
   daisyui: {
     themes: [
+      "garden",
       {
         dark: {
           ...require("daisyui/colors/themes")["[data-theme=dark]"],
@@ -12,7 +13,6 @@ module.exports = {
           "primary-focus": "#b34d4d",
         },
       },
-      "cmyk",
     ],
   },
   plugins: [require("daisyui")],

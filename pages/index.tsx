@@ -7,18 +7,25 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import getContactDetails from "api/getContactDetails";
 import { useQuery } from "react-query";
+import useTheme from "src/hooks/useTheme";
+import ThemeSwitch from "@components/ThemeSwitch";
 
 const LandingPage: NextPage = () => {
   const { data: session } = useSession();
   const query = useQuery("getContactDetails", getContactDetails);
   const renderCounter = useRef(0);
+  const { theme, setTheme } = useTheme();
 
   renderCounter.current = renderCounter.current + 1;
   console.log("renderCounter", renderCounter.current);
 
   useEffect(() => {
-    //console.log(query.data?.data.data);
-  }, [query]);
+    console.log(theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme("garden");
+  };
 
   return (
     <div>
@@ -30,14 +37,15 @@ const LandingPage: NextPage = () => {
 
       <header className="flex items-center p-5 px-16">
         <h1 className="text-5xl">Britjobs</h1>
-        <div className="ml-auto flex gap-2">
+        <div className="ml-auto flex items-center gap-2">
+          <ThemeSwitch />
           {!session && (
             <>
               <Link href={"/auth/login"} passHref>
-                <button className="btn">Login</button>
+                <button className="btn btn-ghost">Login</button>
               </Link>
               <Link href={"/auth/register"} passHref>
-                <button className="btn">Register</button>
+                <button className="btn btn-primary">Register</button>
               </Link>
             </>
           )}
@@ -55,7 +63,7 @@ const LandingPage: NextPage = () => {
         <div className="flex h-[75vh] flex-col items-center justify-center gap-5 border">
           <div className="w-[50vw]">
             <h1 className="mb-5 text-5xl">Find a Job Today</h1>
-            <div className="flex justify-center gap-5 rounded-2xl bg-slate-200 p-5">
+            <div className="bg-base-200 flex justify-center gap-5 rounded-2xl p-5">
               <input type="text" className="input  w-full" placeholder="Position" />
               <input type="text" className="input  w-full" placeholder="City" />
               <button className="btn btn-primary">Search</button>
