@@ -1,12 +1,11 @@
 import * as React from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { MdHome, MdError } from "react-icons/md";
-import { FcGoogle } from "react-icons/fc";
-import keyGen from "@utils/genKey";
+import { MdHome } from "react-icons/md";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import UserRoles from "@utils/userRoles.";
+import GoogleSignInButton from "@components/GoogleSignInButton";
 
 const Login: React.FC = () => {
   const router = useRouter();
@@ -33,13 +32,7 @@ const Login: React.FC = () => {
       </div>
 
       <div className="card bg-base-200 w-3/12 p-10">
-        <button
-          className="btn bg-primary-content hover:bg-primary-content flex justify-center gap-4"
-          onClick={() => handleSignIn()}
-        >
-          <FcGoogle className="text-3xl" />
-          <span className="text-base-100">Sign-in with Google</span>
-        </button>
+        <GoogleSignInButton onClick={() => handleSignIn()} />
       </div>
     </div>
   );

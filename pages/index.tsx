@@ -14,18 +14,9 @@ const LandingPage: NextPage = () => {
   const { data: session } = useSession();
   const query = useQuery("getContactDetails", getContactDetails);
   const renderCounter = useRef(0);
-  const { theme, setTheme } = useTheme();
 
   renderCounter.current = renderCounter.current + 1;
   console.log("renderCounter", renderCounter.current);
-
-  useEffect(() => {
-    console.log(theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme("garden");
-  };
 
   return (
     <div>
@@ -35,32 +26,34 @@ const LandingPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <header className="flex items-center p-5 px-16">
-        <h1 className="text-5xl">Britjobs</h1>
-        <div className="ml-auto flex items-center gap-2">
-          <ThemeSwitch />
-          {!session && (
-            <>
-              <Link href={"/auth/login"} passHref>
-                <button className="btn btn-ghost">Login</button>
-              </Link>
-              <Link href={"/auth/register"} passHref>
-                <button className="btn btn-primary">Register</button>
-              </Link>
-            </>
-          )}
-          {session && (
-            <>
-              <p>{session.user?.email}</p>
-              <p className="link" onClick={() => signOut()}>
-                signout?
-              </p>
-            </>
-          )}
+      <header className="bg-base-200 sticky top-0 p-5">
+        <div className="mx-auto flex max-w-7xl items-center">
+          <h1 className="text-5xl">Britjobs</h1>
+          <div className="ml-auto flex items-center gap-2">
+            <ThemeSwitch />
+            {!session && (
+              <>
+                <Link href={"/auth/login"} passHref>
+                  <button className="btn btn-ghost">Login</button>
+                </Link>
+                <Link href={"/auth/register"} passHref>
+                  <button className="btn btn-primary">Register</button>
+                </Link>
+              </>
+            )}
+            {session && (
+              <>
+                <p>{session.user?.email}</p>
+                <p className="link" onClick={() => signOut()}>
+                  signout?
+                </p>
+              </>
+            )}
+          </div>
         </div>
       </header>
       <main>
-        <div className="flex h-[75vh] flex-col items-center justify-center gap-5 border">
+        <div className="flex h-[75vh] flex-col items-center justify-center gap-5">
           <div className="w-[50vw]">
             <h1 className="mb-5 text-5xl">Find a Job Today</h1>
             <div className="bg-base-200 flex justify-center gap-5 rounded-2xl p-5">
@@ -72,7 +65,7 @@ const LandingPage: NextPage = () => {
         </div>
       </main>
 
-      <div className="p-16">
+      <div className="mx-auto max-w-7xl">
         <h1 className="text-5xl">Trending Jobs</h1>
         <div className="primary-content divider h-2"></div>
         <div className="flex gap-5">

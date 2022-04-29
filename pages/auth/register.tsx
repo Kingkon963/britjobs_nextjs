@@ -7,6 +7,7 @@ import keyGen from "@utils/genKey";
 import { useRouter } from "next/router";
 import { signIn, useSession, getCsrfToken, getSession } from "next-auth/react";
 import UserRoles from "@utils/userRoles.";
+import GoogleSignInButton from "@components/GoogleSignInButton";
 
 enum ACTIONS {
   SET_USERTYPE,
@@ -126,10 +127,7 @@ const Register: React.FC = () => {
             </div>
 
             <div className="divider"></div>
-
-            <button className="btn btn-primary" onClick={() => handleSignIn()}>
-              Signin with Google
-            </button>
+            <GoogleSignInButton onClick={() => handleSignIn()} />
           </div>
           <div className="mt-2 flex flex-col gap-2">
             {state.error !== undefined && (
