@@ -33,8 +33,7 @@ const pool = new Pool({
 function PostgresAdapter(client: Pool = pool, options = {} as AdapterOptions): Adapter {
   return {
     async createUser(user) {
-      // console.log("createUser", user);
-      console.log("PostgresAdapter", options);
+      console.log("createUser", user);
 
       try {
         const sql = `
@@ -49,9 +48,9 @@ function PostgresAdapter(client: Pool = pool, options = {} as AdapterOptions): A
           /*user.emailVerified*/ true,
         ]);
 
-        if (typeof options.userRole === "undefined") {
-          throw new Error("PostgresAdapter requires a userRole");
-        }
+        // if (typeof options.userRole === "undefined") {
+        //   throw new Error("PostgresAdapter requires a userRole");
+        // }
         await assignUserToRole(client, result.rows[0].id, options.userRole as number);
 
         return result.rows[0];

@@ -33,7 +33,6 @@ const LandingPage: NextPage = () => {
         <div className="ml-auto flex gap-2">
           {!session && (
             <>
-              <button className="btn">Hire</button>
               <Link href={"/auth/login"} passHref>
                 <button className="btn">Login</button>
               </Link>

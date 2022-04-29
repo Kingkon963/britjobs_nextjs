@@ -6,6 +6,7 @@ import { MdHome, MdError } from "react-icons/md";
 import keyGen from "@utils/genKey";
 import { useRouter } from "next/router";
 import { signIn, useSession, getCsrfToken, getSession } from "next-auth/react";
+import UserRoles from "@utils/userRoles.";
 
 enum ACTIONS {
   SET_USERTYPE,
@@ -13,18 +14,6 @@ enum ACTIONS {
   RESET_ERROR,
   RESET,
 }
-
-const UserTypes = {
-  AUTHENTICATED: process.env.NEXT_PUBLIC_AUTHENTICATED_ROLE_ID
-    ? parseInt(process.env.NEXT_PUBLIC_AUTHENTICATED_ROLE_ID, 10)
-    : undefined,
-  JOB_PROVIDER: process.env.NEXT_PUBLIC_JOB_PROVIDER_ROLE_ID
-    ? parseInt(process.env.NEXT_PUBLIC_JOB_PROVIDER_ROLE_ID, 10)
-    : undefined,
-  JOB_SEEKER: process.env.NEXT_PUBLIC_JOB_SEEKER_ROLE_ID
-    ? parseInt(process.env.NEXT_PUBLIC_JOB_SEEKER_ROLE_ID, 10)
-    : undefined,
-};
 
 interface Action {
   type: ACTIONS;
@@ -38,7 +27,7 @@ interface InitStateType {
 
 const initState: InitStateType = {
   error: undefined,
-  userType: UserTypes.JOB_SEEKER,
+  userType: UserRoles.JOB_SEEKER,
 };
 
 const reducer = (state: InitStateType, action: Action): InitStateType => {
@@ -113,10 +102,10 @@ const Register: React.FC = () => {
                   type="radio"
                   name="radio-6"
                   className="radio  checked:bg-primary  mr-5 checked:animate-spin"
-                  checked={state.userType === UserTypes.JOB_SEEKER}
+                  checked={state.userType === UserRoles.JOB_SEEKER}
                   readOnly
                   onClick={() =>
-                    dispatch({ type: ACTIONS.SET_USERTYPE, payload: UserTypes.JOB_SEEKER })
+                    dispatch({ type: ACTIONS.SET_USERTYPE, payload: UserRoles.JOB_SEEKER })
                   }
                 />
                 <span className="label-text text-lg">I&apos;m searching Jobs</span>
@@ -126,10 +115,10 @@ const Register: React.FC = () => {
                   type="radio"
                   name="radio-6"
                   className="radio  checked:bg-primary  mr-5 checked:animate-spin"
-                  checked={state.userType === UserTypes.JOB_PROVIDER}
+                  checked={state.userType === UserRoles.JOB_PROVIDER}
                   readOnly
                   onClick={() => {
-                    dispatch({ type: ACTIONS.SET_USERTYPE, payload: UserTypes.JOB_PROVIDER });
+                    dispatch({ type: ACTIONS.SET_USERTYPE, payload: UserRoles.JOB_PROVIDER });
                   }}
                 />
                 <span className="label-text text-lg">I&apos;m hiring</span>
