@@ -6,6 +6,17 @@ import keyGen from "@utils/genKey";
 import { useRouter } from "next/router";
 import TextField from "@components/EditableTextField";
 import ThemeSwitch from "@components/ThemeSwitch";
+import { useForm } from "react-hook-form";
+
+type FormData = {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  gender: string;
+  postcode: number;
+  addressLine: string;
+  city: string;
+};
 
 enum ACTIONS {
   SET_IDENTIFIER,
@@ -53,6 +64,15 @@ const reducer = (prevState: LoginInterface, action: ActionType): LoginInterface 
 const CompleteProfile: React.FC = () => {
   const [state, dispatch] = React.useReducer(reducer, initState);
   const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
+
+  const onSubmit = (data: FormData) => {
+    console.log(data);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center gap-5">
@@ -68,7 +88,7 @@ const CompleteProfile: React.FC = () => {
         </div>
       </div>
       <div className="card w-full max-w-7xl rounded-3xl p-10 px-24">
-        <form className="flex flex-col">
+        <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-2 gap-5">
             <h1 className=" col-span-full mb-5 text-4xl">Personal Details</h1>
             <div className="form-control w-full max-w-lg">
@@ -76,6 +96,7 @@ const CompleteProfile: React.FC = () => {
                 <span className="label-text">First Name *</span>
               </label>
               <input
+                {...register("firstName")}
                 type="text"
                 placeholder="Enter your First Name"
                 className="input bg-base-200 w-full"
@@ -87,6 +108,7 @@ const CompleteProfile: React.FC = () => {
                 <span className="label-text">Last Name *</span>
               </label>
               <input
+                {...register("lastName")}
                 type="text"
                 placeholder="Enter your Last Name"
                 className="input bg-base-200 w-full"
@@ -97,7 +119,11 @@ const CompleteProfile: React.FC = () => {
               <label className="label">
                 <span className="label-text">Date of Birth *</span>
               </label>
-              <input type="date" className="input bg-base-200 w-full" />
+              <input
+                {...register("dateOfBirth")}
+                type="date"
+                className="input bg-base-200 w-full"
+              />
             </div>
 
             <div className="form-control w-full max-w-lg flex-row items-center gap-5">
@@ -106,6 +132,7 @@ const CompleteProfile: React.FC = () => {
               </label>
               <label htmlFor="male" className="relative">
                 <input
+                  {...register("gender")}
                   type="radio"
                   className="radio checked:bg-base-200 h-16 w-16 rounded-xl border-0"
                   name="gender"
@@ -116,6 +143,7 @@ const CompleteProfile: React.FC = () => {
               </label>
               <label htmlFor="felmale" className="relative">
                 <input
+                  {...register("gender")}
                   type="radio"
                   className="radio checked:bg-base-200 h-16 w-16 rounded-xl border-0 "
                   name="gender"
@@ -134,7 +162,8 @@ const CompleteProfile: React.FC = () => {
                 <span className="label-text">Postcode *</span>
               </label>
               <input
-                type="text"
+                {...register("postcode")}
+                type="number"
                 placeholder="Enter your Postcode"
                 className="input bg-base-200 w-full"
               />
@@ -147,6 +176,7 @@ const CompleteProfile: React.FC = () => {
                 <span className="label-text">Address Line *</span>
               </label>
               <input
+                {...register("addressLine")}
                 type="text"
                 placeholder="Enter your Address Line"
                 className="input bg-base-200 w-full"
@@ -158,6 +188,7 @@ const CompleteProfile: React.FC = () => {
                 <span className="label-text">City *</span>
               </label>
               <input
+                {...register("city")}
                 type="text"
                 placeholder="Enter your City"
                 className="input bg-base-200 w-full"
