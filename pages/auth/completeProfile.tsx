@@ -6,7 +6,7 @@ import keyGen from "@utils/genKey";
 import { useRouter } from "next/router";
 import TextField from "@components/EditableTextField";
 import ThemeSwitch from "@components/ThemeSwitch";
-import { useForm } from "react-hook-form";
+import { FieldError, useForm } from "react-hook-form";
 
 type FormData = {
   firstName: string;
@@ -18,51 +18,16 @@ type FormData = {
   city: string;
 };
 
-enum ACTIONS {
-  SET_IDENTIFIER,
-  SET_PASSWORD,
-  SET_ERROR,
-  RESET_ERROR,
+function FieldError({ error }: { error: FieldError | undefined }) {
+  if (error === undefined) return <></>;
+  return (
+    <label className="label">
+      <p className="label-text-alt text-error text-xs italic tracking-wide">{error.message}</p>
+    </label>
+  );
 }
-
-interface LoginInterface {
-  identifier: string;
-  password: string;
-  error?: string;
-}
-interface ActionType {
-  type: ACTIONS;
-  payload?: string;
-}
-
-const initState: LoginInterface = {
-  identifier: "",
-  password: "",
-  error: undefined,
-};
-
-const reducer = (prevState: LoginInterface, action: ActionType): LoginInterface => {
-  switch (action.type) {
-    case ACTIONS.SET_IDENTIFIER:
-      if (action.payload !== undefined) return { ...prevState, identifier: action.payload };
-      return prevState;
-
-    case ACTIONS.SET_PASSWORD:
-      if (action.payload !== undefined) return { ...prevState, password: action.payload };
-      return prevState;
-
-    case ACTIONS.SET_ERROR:
-      if (action.payload !== undefined) return { ...prevState, error: action.payload };
-      return prevState;
-    case ACTIONS.RESET_ERROR:
-      return { ...prevState, error: undefined };
-    default:
-      throw new Error("No reducer found for this action: " + ACTIONS[action.type]);
-  }
-};
 
 const CompleteProfile: React.FC = () => {
-  const [state, dispatch] = React.useReducer(reducer, initState);
   const router = useRouter();
   const {
     register,
@@ -91,16 +56,20 @@ const CompleteProfile: React.FC = () => {
         <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-2 gap-5">
             <h1 className=" col-span-full mb-5 text-4xl">Personal Details</h1>
+
             <div className="form-control w-full max-w-lg">
               <label className="label">
                 <span className="label-text">First Name *</span>
               </label>
               <input
-                {...register("firstName")}
+                {...register("firstName", {
+                  required: "First Name is required",
+                })}
                 type="text"
                 placeholder="Enter your First Name"
-                className="input bg-base-200 w-full"
+                className={`input ${errors.firstName ? "input-error" : ""} bg-base-200 w-full`}
               />
+              <FieldError error={errors.firstName} />
             </div>
 
             <div className="form-control w-full max-w-lg">
@@ -108,11 +77,12 @@ const CompleteProfile: React.FC = () => {
                 <span className="label-text">Last Name *</span>
               </label>
               <input
-                {...register("lastName")}
+                {...register("lastName", { required: "Last Name is required" })}
                 type="text"
                 placeholder="Enter your Last Name"
-                className="input bg-base-200 w-full"
+                className={`input ${errors.lastName ? "input-error" : ""} bg-base-200 w-full`}
               />
+              <FieldError error={errors.lastName} />
             </div>
 
             <div className="form-control w-full max-w-lg">
@@ -120,38 +90,47 @@ const CompleteProfile: React.FC = () => {
                 <span className="label-text">Date of Birth *</span>
               </label>
               <input
-                {...register("dateOfBirth")}
+                {...register("dateOfBirth", {
+                  //valueAsDate: true,
+                  required: "please provide your date of birth",
+                })}
                 type="date"
-                className="input bg-base-200 w-full"
+                className={`input ${errors.dateOfBirth ? "input-error" : ""} bg-base-200 w-full`}
               />
+              <FieldError error={errors.dateOfBirth} />
             </div>
 
-            <div className="form-control w-full max-w-lg flex-row items-center gap-5">
-              <label className="label">
-                <span className="label-text">Gender *</span>
-              </label>
-              <label htmlFor="male" className="relative">
-                <input
-                  {...register("gender")}
-                  type="radio"
-                  className="radio checked:bg-base-200 h-16 w-16 rounded-xl border-0"
-                  name="gender"
-                  value="male"
-                  id="male"
-                />
-                <FaMale className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer text-4xl" />
-              </label>
-              <label htmlFor="felmale" className="relative">
-                <input
-                  {...register("gender")}
-                  type="radio"
-                  className="radio checked:bg-base-200 h-16 w-16 rounded-xl border-0 "
-                  name="gender"
-                  value="female"
-                  id="felmale"
-                />
-                <FaFemale className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer text-4xl" />
-              </label>
+            <div className="form-control w-full max-w-lg">
+              <div className="mt-auto flex flex-row items-center gap-5">
+                <label className="label">
+                  <span className="label-text">Gender *</span>
+                </label>
+                <label htmlFor="male" className="relative">
+                  <input
+                    {...register("gender", {
+                      required: "please choose your gender",
+                    })}
+                    type="radio"
+                    className="radio checked:bg-base-200 h-16 w-16 rounded-xl border-0"
+                    name="gender"
+                    value="male"
+                    id="male"
+                  />
+                  <FaMale className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer text-4xl" />
+                </label>
+                <label htmlFor="felmale" className="relative">
+                  <input
+                    {...register("gender")}
+                    type="radio"
+                    className="radio checked:bg-base-200 h-16 w-16 rounded-xl border-0 "
+                    name="gender"
+                    value="female"
+                    id="felmale"
+                  />
+                  <FaFemale className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer text-4xl" />
+                </label>
+              </div>
+              <FieldError error={errors.gender} />
             </div>
 
             <div className="divider col-start-1 col-end-3"></div>
@@ -162,11 +141,14 @@ const CompleteProfile: React.FC = () => {
                 <span className="label-text">Postcode *</span>
               </label>
               <input
-                {...register("postcode")}
+                {...register("postcode", {
+                  required: "Postcode is required",
+                })}
                 type="number"
                 placeholder="Enter your Postcode"
-                className="input bg-base-200 w-full"
+                className={`input ${errors.postcode ? "input-error" : ""} bg-base-200 w-full`}
               />
+              <FieldError error={errors.postcode} />
             </div>
 
             <div></div>
@@ -176,11 +158,14 @@ const CompleteProfile: React.FC = () => {
                 <span className="label-text">Address Line *</span>
               </label>
               <input
-                {...register("addressLine")}
+                {...register("addressLine", {
+                  required: "Address Line is required",
+                })}
                 type="text"
                 placeholder="Enter your Address Line"
-                className="input bg-base-200 w-full"
+                className={`input ${errors.addressLine ? "input-error" : ""} bg-base-200 w-full`}
               />
+              <FieldError error={errors.addressLine} />
             </div>
 
             <div className="form-control w-full max-w-lg">
@@ -188,11 +173,14 @@ const CompleteProfile: React.FC = () => {
                 <span className="label-text">City *</span>
               </label>
               <input
-                {...register("city")}
+                {...register("city", {
+                  required: "City is required",
+                })}
                 type="text"
                 placeholder="Enter your City"
-                className="input bg-base-200 w-full"
+                className={`input ${errors.city ? "input-error" : ""} bg-base-200 w-full`}
               />
+              <FieldError error={errors.city} />
             </div>
           </div>
           <button className="btn btn-primary mt-10 w-full max-w-sm self-end" type="submit">
