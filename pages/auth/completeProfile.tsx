@@ -7,16 +7,11 @@ import { useRouter } from "next/router";
 import TextField from "@components/EditableTextField";
 import ThemeSwitch from "@components/ThemeSwitch";
 import { FieldError, useForm } from "react-hook-form";
-
-type FormData = {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  gender: string;
-  postcode: number;
-  addressLine: string;
-  city: string;
-};
+import CompleteProfileFormData from "types/CompleteProfileFormData";
+import { useMutation, useQuery } from "react-query";
+import createContactDetails from "api/createContactDetails";
+import me from "api/me";
+import updateContactDetailsUser from "api/updateContactDetailsUser";
 
 function FieldError({ error }: { error: FieldError | undefined }) {
   if (error === undefined) return <></>;
@@ -33,10 +28,21 @@ const CompleteProfile: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<CompleteProfileFormData>();
+  const meQuery = useQuery("me", me);
+  const updateContactDetailsUserMutaion = useMutation(updateContactDetailsUser);
+  const createContactDetailsMutaion = useMutation(createContactDetails, {
+    onSuccess: (res) => {
+      const contactDetailsID = res.data.data.id;
+      if (meQuery.data) {
+        const userID = meQuery.data.data.id;
+        updateContactDetailsUserMutaion.mutate({ id: contactDetailsID, userId: userID });
+      }
+    },
+  });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = (data: CompleteProfileFormData) => {
+    createContactDetailsMutaion.mutate(data);
   };
 
   return (
@@ -91,7 +97,7 @@ const CompleteProfile: React.FC = () => {
               </label>
               <input
                 {...register("dateOfBirth", {
-                  //valueAsDate: true,
+                  valueAsDate: true,
                   required: "please provide your date of birth",
                 })}
                 type="date"
@@ -108,7 +114,7 @@ const CompleteProfile: React.FC = () => {
                 <label htmlFor="male" className="relative">
                   <input
                     {...register("gender", {
-                      required: "please choose your gender",
+                      required: "Please choose your gender",
                     })}
                     type="radio"
                     className="radio checked:bg-base-200 h-16 w-16 rounded-xl border-0"
@@ -183,9 +189,18 @@ const CompleteProfile: React.FC = () => {
               <FieldError error={errors.city} />
             </div>
           </div>
-          <button className="btn btn-primary mt-10 w-full max-w-sm self-end" type="submit">
+          <button
+            className={`btn btn-primary ${
+              createContactDetailsMutaion.isLoading ? "loading" : ""
+            } mt-10 w-full max-w-sm self-end`}
+            type="submit"
+            disabled={createContactDetailsMutaion.isLoading}
+          >
             Save
           </button>
+          {createContactDetailsMutaion.isError && (
+            <p className="text-error">Failed to save your data! Please try again.</p>
+          )}
         </form>
       </div>
     </div>
