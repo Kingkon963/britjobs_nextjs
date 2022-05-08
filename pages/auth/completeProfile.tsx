@@ -1,17 +1,15 @@
 import * as React from "react";
 import Head from "next/head";
-import Link from "next/link";
 import { FaMale, FaFemale } from "react-icons/fa";
-import keyGen from "@utils/genKey";
 import { useRouter } from "next/router";
-import TextField from "@components/EditableTextField";
 import ThemeSwitch from "@components/ThemeSwitch";
 import { FieldError, useForm } from "react-hook-form";
 import CompleteProfileFormData from "types/CompleteProfileFormData";
 import { useMutation, useQuery } from "react-query";
 import createContactDetails from "api/createContactDetails";
-import me from "api/me";
 import updateContactDetailsUser from "api/updateContactDetailsUser";
+import { useSession } from "next-auth/react";
+import getUserRole from "api/getUserRole";
 
 function FieldError({ error }: { error: FieldError | undefined }) {
   if (error === undefined) return <></>;
@@ -29,20 +27,35 @@ const CompleteProfile: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<CompleteProfileFormData>();
-  const meQuery = useQuery("me", me);
+  const session = useSession();
+  const getUserRoleQuery = useQuery("utils/get-user-role", getUserRole);
   const updateContactDetailsUserMutaion = useMutation(updateContactDetailsUser);
-  const createContactDetailsMutaion = useMutation(createContactDetails, {
-    onSuccess: (res) => {
-      const contactDetailsID = res.data.data.id;
-      if (meQuery.data) {
-        const userID = meQuery.data.data.id;
-        updateContactDetailsUserMutaion.mutate({ id: contactDetailsID, userId: userID });
-      }
-    },
-  });
+  const createContactDetailsMutaion = useMutation(createContactDetails);
 
   const onSubmit = (data: CompleteProfileFormData) => {
-    createContactDetailsMutaion.mutate(data);
+    createContactDetailsMutaion.mutate(data, {
+      onSuccess: (res) => {
+        const contactDetailsID = res.data.data.id;
+        if (session.data) {
+          const userID = session.data.id;
+
+          updateContactDetailsUserMutaion.mutate(
+            { id: contactDetailsID, userId: userID },
+            {
+              onSuccess: (res) => {
+                const userRole = getUserRoleQuery.data?.data?.data;
+                console.log(userRole);
+                if (userRole.name === "Job Seeker") {
+                  router.push("/seeker/dashboard");
+                } else if (userRole.name === "Job Provider") {
+                  router.push("/provider/dashboard");
+                }
+              },
+            }
+          );
+        }
+      },
+    });
   };
 
   return (

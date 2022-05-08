@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
-const Dashboard: NextPage = () => {
+const SeekerDashboard: NextPage = () => {
   const [profileIsIncomplete, setProfileIsIncomplete] = useState(false);
   const session = useSession();
   const router = useRouter();
@@ -44,4 +44,4 @@ const Dashboard: NextPage = () => {
   );
 };
 
-export default Dashboard;
+export default SeekerDashboard;
