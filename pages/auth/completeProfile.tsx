@@ -9,7 +9,7 @@ import { useMutation, useQuery } from "react-query";
 import createContactDetails from "api/createContactDetails";
 import updateContactDetailsUser from "api/updateContactDetailsUser";
 import { useSession } from "next-auth/react";
-import getUserRole from "api/getUserRole";
+import getMyRole from "api/getMyRole";
 
 function FieldError({ error }: { error: FieldError | undefined }) {
   if (error === undefined) return <></>;
@@ -28,7 +28,6 @@ const CompleteProfile: React.FC = () => {
     formState: { errors },
   } = useForm<CompleteProfileFormData>();
   const session = useSession();
-  const getUserRoleQuery = useQuery("utils/get-user-role", getUserRole);
   const updateContactDetailsUserMutaion = useMutation(updateContactDetailsUser);
   const createContactDetailsMutaion = useMutation(createContactDetails);
 
@@ -43,12 +42,11 @@ const CompleteProfile: React.FC = () => {
             { id: contactDetailsID, userId: userID },
             {
               onSuccess: (res) => {
-                const userRole = getUserRoleQuery.data?.data?.data;
-                console.log(userRole);
-                if (userRole.name === "Job Seeker") {
-                  router.push("/seeker/dashboard");
-                } else if (userRole.name === "Job Provider") {
-                  router.push("/provider/dashboard");
+                const userRole = session.data.user.role;
+                if (userRole?.name === "Job Seeker") {
+                  router.replace("/seeker/dashboard");
+                } else if (userRole?.name === "Job Provider") {
+                  router.replace("/provider/dashboard");
                 }
               },
             }

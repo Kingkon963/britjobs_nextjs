@@ -19,6 +19,11 @@ declare module "next-auth" {
     jwt: string;
     user: {
       isNewUser?: boolean;
+      role?: {
+        id: number;
+        name: string;
+        description: string;
+      };
     } & DefaultSession["user"];
   }
 }

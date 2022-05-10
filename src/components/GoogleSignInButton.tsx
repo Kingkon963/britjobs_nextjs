@@ -4,7 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 function GoogleSignInButton({ onClick }: { onClick: () => void }) {
   return (
     <button
-      className="btn flex justify-center gap-4 bg-gray-200 hover:bg-white"
+      className="btn flex h-fit w-fit justify-center gap-4 bg-gray-200 py-2 hover:bg-white sm:w-full"
       onClick={() => onClick()}
     >
       <FcGoogle className="text-3xl" />

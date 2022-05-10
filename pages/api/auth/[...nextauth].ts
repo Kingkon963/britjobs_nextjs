@@ -4,6 +4,8 @@ import GoogleProvider from "next-auth/providers/google";
 import { NextApiRequest, NextApiResponse } from "next";
 import getUserFromStrapi from "@utils/getUserFromStrapi";
 import PostgresAdapter from "@utils/postgresAdapter";
+import { QueryClient, QueryFunctionContext } from "react-query";
+import getMyRole from "api/getMyRole";
 
 let provider: string | undefined = undefined;
 let userRole: number | undefined = undefined;
@@ -40,7 +42,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       async session({ session, token, user }) {
         session.jwt = token.jwt;
         session.id = token.id;
-        //session.isNewUser = token.isNewUser;
         session.user = {
           ...user,
           email: token.email,
@@ -48,6 +49,20 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
           image: token.picture,
           isNewUser: token.isNewUser,
         };
+
+        const queryClient = new QueryClient({});
+        try {
+          const data = await queryClient.fetchQuery("get-my-role", () => getMyRole(token.jwt));
+          if (data.status === 200) {
+            session.user = {
+              ...session.user,
+              role: data.data.data,
+            };
+          }
+        } catch (error) {
+          console.log("error", error);
+        }
+
         return session;
       },
       async jwt({ token, account, isNewUser }) {

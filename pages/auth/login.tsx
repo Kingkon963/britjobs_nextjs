@@ -3,18 +3,27 @@ import Head from "next/head";
 import Link from "next/link";
 import { MdHome } from "react-icons/md";
 import { useRouter } from "next/router";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import UserRoles from "@utils/userRoles.";
 import GoogleSignInButton from "@components/GoogleSignInButton";
 
 const Login: React.FC = () => {
   const router = useRouter();
+  const session = useSession();
 
   const handleSignIn = () => {
     signIn("google", {
       userRole: UserRoles.JOB_SEEKER,
     });
   };
+
+  React.useEffect(() => {
+    if (session.data) {
+      console.log(session.data);
+      // if(session.data.isNewUser) router.replace("/auth/complete-profile");
+      // else router.replace("/job-seeker/dashboard");
+    }
+  }, [session]);
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -31,7 +40,7 @@ const Login: React.FC = () => {
         </Link>
       </div>
 
-      <div className="card bg-base-200 w-3/12 p-10">
+      <div className="card bg-base-200 w-3/12 min-w-fit p-10">
         <GoogleSignInButton onClick={() => handleSignIn()} />
       </div>
     </div>
