@@ -26,7 +26,7 @@ const LandingPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <header className="bg-base-200 sticky top-0 p-5">
+      <header className="sticky top-0 bg-base-200 p-5">
         <div className="mx-auto flex max-w-7xl items-center">
           <h1 className="text-5xl">Britjobs</h1>
           <div className="ml-auto flex items-center gap-2">
@@ -56,7 +56,7 @@ const LandingPage: NextPage = () => {
         <div className="flex h-[75vh] flex-col items-center justify-center gap-5">
           <div className="w-[50vw]">
             <h1 className="mb-5 text-5xl">Find a Job Today</h1>
-            <div className="bg-base-200 flex justify-center gap-5 rounded-2xl p-5">
+            <div className="flex justify-center gap-5 rounded-2xl bg-base-200 p-5">
               <input type="text" className="input  w-full" placeholder="Position" />
               <input type="text" className="input  w-full" placeholder="City" />
               <button className="btn btn-primary">Search</button>
@@ -77,7 +77,7 @@ const LandingPage: NextPage = () => {
                 width={400}
                 height={225}
               />
-              <div className="from-base-200 absolute bottom-0 h-fit w-full bg-gradient-to-t  to-transparent px-7">
+              <div className="absolute bottom-0 h-fit w-full bg-gradient-to-t from-base-200  to-transparent px-7">
                 <h2 className="card-title py-2 text-2xl">Shoe store management</h2>
               </div>
             </figure>
