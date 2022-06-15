@@ -20,10 +20,15 @@ const Login: React.FC = () => {
   React.useEffect(() => {
     if (session.data) {
       console.log(session.data);
-      // if(session.data.isNewUser) router.replace("/auth/complete-profile");
-      // else router.replace("/job-seeker/dashboard");
+      if (session.data.isNewUser) router.replace("/auth/complete-profile");
+      else {
+        if (session.data.user.role?.name === UserRoles.JOB_SEEKER)
+          router.replace("/seeker/dashboard");
+        if (session.data.user.role?.name === UserRoles.JOB_PROVIDER)
+          router.replace("/provider/dashboard");
+      }
     }
-  }, [session]);
+  }, [router, session]);
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -40,7 +45,7 @@ const Login: React.FC = () => {
         </Link>
       </div>
 
-      <div className="card bg-base-200 w-3/12 min-w-fit p-10">
+      <div className="card w-3/12 min-w-fit bg-base-200 p-10">
         <GoogleSignInButton onClick={() => handleSignIn()} />
       </div>
     </div>
