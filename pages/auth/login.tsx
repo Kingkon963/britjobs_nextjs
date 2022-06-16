@@ -4,12 +4,18 @@ import Link from "next/link";
 import { MdHome } from "react-icons/md";
 import { useRouter } from "next/router";
 import { signIn, useSession } from "next-auth/react";
+import { useQuery } from "react-query";
 import UserRoles from "@utils/userRoles.";
 import GoogleSignInButton from "@components/GoogleSignInButton";
+import getContactDetails from "api/getContactDetails";
 
 const Login: React.FC = () => {
   const router = useRouter();
   const session = useSession();
+  const { data: contactDetails, isLoading: contactDetailsLoading } = useQuery(
+    "getContactDetails",
+    getContactDetails
+  );
 
   const handleSignIn = () => {
     signIn("google", {
@@ -18,9 +24,10 @@ const Login: React.FC = () => {
   };
 
   React.useEffect(() => {
-    if (session.data) {
-      console.log(session.data);
-      if (session.data.isNewUser) router.replace("/auth/complete-profile");
+    if (session.data && !contactDetailsLoading) {
+      console.log(contactDetails);
+      if (session.data.isNewUser || contactDetails?.data.data.length === 0)
+        router.replace("/auth/completeProfile");
       else {
         if (session.data.user.role?.name === UserRoles.JOB_SEEKER)
           router.replace("/seeker/dashboard");
@@ -28,7 +35,7 @@ const Login: React.FC = () => {
           router.replace("/provider/dashboard");
       }
     }
-  }, [router, session]);
+  }, [router, session, contactDetails, contactDetailsLoading]);
 
   return (
     <div className="flex h-screen items-center justify-center">

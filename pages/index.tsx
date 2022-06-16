@@ -12,7 +12,6 @@ import ThemeSwitch from "@components/ThemeSwitch";
 
 const LandingPage: NextPage = () => {
   const { data: session } = useSession();
-  const query = useQuery("getContactDetails", getContactDetails);
   const renderCounter = useRef(0);
 
   renderCounter.current = renderCounter.current + 1;
